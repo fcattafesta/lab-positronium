@@ -2,8 +2,8 @@
 
 void analysis() {
 
-  std::string filepath = "data/raw/132Cs_calibration_1204.txt", treepath = "data/132Cs.root";
-  std::string figpath = "figures/132CsImproved.pdf";
+  std::string filepath = "data/raw/241Am_calibration_1204.txt", treepath = "data/241Am.root";
+  std::string figpath = "figures/241AmImproved.pdf";
 
   MakeTree(filepath, treepath);
   ComputeEnergyImproved(treepath);
@@ -23,7 +23,7 @@ void analysis() {
 
   int nbins = 80;
   double maxEnergy = TMath::MaxElement(nentries, data);
-  double cut = 50e3;
+  double cut = 100e3;
   //double cut = maxEnergy;
 
   auto h = new TH1D("h", "; Energy [a.u.]", nbins, 0., cut);
