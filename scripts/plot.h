@@ -31,7 +31,7 @@ TLegend * DrawLegend(TCanvas *c, double x1, double y1, double x2, double y2,
   gStyle->SetLegendBorderSize(0.);
   gStyle->SetLegendFont(42);
   gStyle->SetLegendTextSize(.03);
-  
+
   auto legend = new TLegend(x1, y1, x1+0.25, y1+0.25);
   legend->SetOption("NDC NB");
   legend->AddEntry(h, "Energy spectrum");
@@ -41,7 +41,8 @@ TLegend * DrawLegend(TCanvas *c, double x1, double y1, double x2, double y2,
 
   auto fitLegend = new TPaveText(x1+0.25, y1, x2, y2);
   fitLegend->SetOption("NDC NB");
-  fitLegend->SetFillColor(0);
+  fitLegend->SetFillStyle(0);
+  fitLegend->SetBorderSize(0.);
   fitLegend->SetTextFont(42);
   fitLegend->SetTextSize(.03);
   fitLegend->SetTextAlign(11);
