@@ -158,11 +158,3 @@ void DrawSignal(std::string treepath, int event) {
     }
   }
 }
-
-void HistStyle(TH1D * h) {
-  h->SetLineColor(kBlack); h->SetLineWidth(1);
-  h->SetFillColorAlpha(46, 0.5);
-
-  gStyle->SetOptStat(10); gStyle->SetStatBorderSize(0);
-  gStyle->SetStatX(1.); gStyle->SetStatY(1.);
-}

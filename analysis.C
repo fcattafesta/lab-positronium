@@ -1,42 +1,28 @@
-#include "utilities.h"
+#include "scripts/spectrum.h"
+#include "scripts/plot.h"
 
 void analysis() {
 
-  std::string filepath = "data/raw/241Am_calibration_1204.txt", treepath = "data/241Am.root";
-  std::string figpath = "figures/241AmImproved.pdf";
-
-  MakeTree(filepath, treepath);
-  ComputeEnergyImproved(treepath);
-
-  auto f = new TFile(treepath.c_str(), "READ");
-  auto t = f->Get<TTree>("tree;2");
-
-  int nentries = t->GetEntries();
-  double data[nentries], Energy;
-
-  t->SetBranchAddress("Energy", &Energy);
-
-  for (int i=0; i<nentries; i++) {
-    t->GetEntry(i);
-    data[i] = Energy;
-  }
-
+  std::string treepath = "data/60Co.root";
+  double LowLim = 20e3;
+  double UpLim = 90e3;
   int nbins = 80;
-  double maxEnergy = TMath::MaxElement(nentries, data);
-  double cut = 100e3;
-  //double cut = maxEnergy;
 
-  auto h = new TH1D("h", "; Energy [a.u.]", nbins, 0., cut);
+  auto h = MakeSpectrum(treepath, nbins, LowLim, UpLim);
 
-  for (int i=0; i<nentries; i++) {
-    if (data[i] <= cut) h->Fill(data[i]);
-  }
+  TF1 *peak = new TF1("peak", "gaus", 73e3, 77e3);
 
   auto c1 = new TCanvas();
+  auto result = h->Fit(peak, "SRLNQ");
   h->Draw();
-  HistStyle(h);
-  c1->SaveAs(figpath.c_str());
-  //auto c2 = new TCanvas();
-  //DrawSignal(treepath, 1);
+  gPad->Update();
+  peak->Draw("AL SAME");
 
+  auto legend = DrawLegend(c1, .18, .65, .55, .85, h, peak);
+  legend->SetHeader("^{60}Co", "C");
+
+  DrawDate(c1);
+
+  MyStyle(h, peak);
+  c1->SaveAs("provaCo.pdf");
 }
