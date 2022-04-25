@@ -1,11 +1,11 @@
 #include "scripts/spectrum.h"
 #include "scripts/plot.h"
 
-void analysis() {
+void calibration() {
 
   std::string treepath = "data/137Cs.root", figpath = "figures/137CsImproved.pdf";
 
-  double LowLim = 20e3;
+  double LowLim = 40e3;
   double UpLim = 50e3;
   int nbins = 80;
 
@@ -19,11 +19,11 @@ void analysis() {
   gPad->Update();
   peak->Draw("AL SAME");
 
-  auto legend = DrawLegend(c1, .25, .65, .65, .85, h, peak);
+  auto legend = DrawLegend(c1, .35, .65, .85, .85, h, peak);
   legend->SetHeader("^{137}Cs", "C");
 
   DrawDate(c1);
 
   MyStyle(h, peak);
-  c1->SaveAs(figpath.c_str());
+  //c1->SaveAs(figpath.c_str());
 }
