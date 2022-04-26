@@ -3,15 +3,15 @@
 
 void analysis() {
 
-  std::string treepath = "data/60Co.root", figpath = "figures/60Co2604.pdf";
+  std::string treepath = "data/137Cs.root", figpath = "figures/137Cs2604.pdf";
 
   double LowLim = 20e3;
-  double UpLim = 80e3;
+  double UpLim = 50e3;
   int nbins = 200;
 
   auto h = MakeSpectrum(treepath, nbins, LowLim, UpLim);
 
-  TF1 *peak = new TF1("peak", "gaus", 127e3, 139e3);
+  TF1 *peak = new TF1("peak", "gaus", 40.5e3, 46e3);
 
   auto c1 = new TCanvas();
   auto result = h->Fit(peak, "SRLNQ");
@@ -20,7 +20,7 @@ void analysis() {
   peak->Draw("AL SAME");
 
   auto legend = DrawLegend(c1, .25, .65, .65, .85, h, peak);
-  legend->SetHeader("^{60}Co", "C");
+  legend->SetHeader("^{137}Cs", "C");
 
   DrawDate(c1);
 
