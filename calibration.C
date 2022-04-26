@@ -3,27 +3,24 @@
 
 void calibration() {
 
-  std::string treepath = "data/137Cs.root", figpath = "figures/137CsImproved.pdf";
+  int npoints = 3;
+  double eRef[3] = {59.54, 661.6, 1173, 1333.};
+  double eFit[3] = {43046, 44779, 119086, 132649};
+  double errFit[3] = {190, 13, 50, , 30};
+  double errx[3] = {0, 0, 0};
 
-  double LowLim = 40e3;
-  double UpLim = 50e3;
-  int nbins = 80;
+  auto g = new TGraphErrors(npoints, eRef, eFit, errx, errFit);
 
-  auto h = MakeSpectrum(treepath, nbins, LowLim, UpLim);
-
-  TF1 *peak = new TF1("peak", "gaus", 42.5e3, 47e3);
+  auto fit = new TF1("linear", "pol1", 0, 2000);
 
   auto c1 = new TCanvas();
-  auto result = h->Fit(peak, "SRLNQ");
-  h->Draw();
-  gPad->Update();
-  peak->Draw("AL SAME");
 
-  auto legend = DrawLegend(c1, .35, .65, .85, .85, h, peak);
-  legend->SetHeader("^{137}Cs", "C");
-
-  DrawDate(c1);
-
-  MyStyle(h, peak);
-  //c1->SaveAs(figpath.c_str());
+  g->Fit(fit, "RN EX0");
+  g->Draw("AP SAME");
+  auto xaxis = g->GetXaxis();
+  xaxis->SetTitle("Reference [keV]");
+  auto yaxis = g->GetYaxis();
+  yaxis->SetTitle("Fit Value [u.a.]");
+  fit->Draw("AL SAME");
+  g->SetMarkerStyle(8);
 }

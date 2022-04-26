@@ -4,9 +4,8 @@ int RECORD_LENGTH = 1030;
 
 void MakeTree(std::string filepath, std::string treepath) {
 
-  int RECORD_LENGTH = 1030;
-
-  int RecordLength, BoardID, Channel, Event, TriggerTT;
+  int RecordLength, BoardID, Channel, Event;
+  double TriggerTT;
   int Amplitudes[RECORD_LENGTH];
 
   ifstream infile (filepath);
@@ -14,6 +13,7 @@ void MakeTree(std::string filepath, std::string treepath) {
   auto f = new TFile(treepath.c_str(), "RECREATE");
 
   auto tree = new TTree("tree", "ADC Acquisitions");
+  tree->SetAutoSave(0);
 
   //tree->Branch("RecordLength", &RecordLength);
   //tree->Branch("BoardID", &BoardID);
@@ -70,7 +70,7 @@ void MakeTree(std::string filepath, std::string treepath) {
 void ComputeEnergy(std::string treepath) {
 
   auto f = new TFile(treepath.c_str(), "UPDATE");
-  auto t = f->Get<TTree>("tree"); //tree does not exist after an update (e.g. tree;1)
+  auto t = f->Get<TTree>("tree;1"); //tree does not exist after an update (e.g. tree;1)
 
   int nentries = t->GetEntries();
   int v[RECORD_LENGTH];
@@ -98,7 +98,7 @@ void ComputeEnergy(std::string treepath) {
 void ComputeEnergyImproved(std::string treepath) {
 
   auto f = new TFile(treepath.c_str(), "UPDATE");
-  auto t = f->Get<TTree>("tree"); //tree does not exist after an update (e.g. tree;1)
+  auto t = f->Get<TTree>("tree;1"); //tree does not exist after an update (e.g. tree;1)
 
   int nentries = t->GetEntries();
   int v[RECORD_LENGTH];
