@@ -11,7 +11,7 @@ void analysis() {
 
   auto h = MakeSpectrum(treepath, nbins, LowLim, UpLim);
 
-  TF1 *peak = new TF1("peak", "gaus", 40.5e3, 46e3);
+  TF1 *peak = new TF1("peak", "gaus", 41.5e3, 46e3);
 
   auto c1 = new TCanvas();
   auto result = h->Fit(peak, "SRLNQ");
