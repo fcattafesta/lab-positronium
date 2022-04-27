@@ -3,11 +3,11 @@
 
 void calibration() {
 
-  int npoints = 4;
-  double eRef[4] = {59.54, 661.6, 1173, 1333.};
-  double eFit[4] = {43046, 43137, 64502, 71250};
-  double errFit[4] = {16, 3, 18, 20};
-  double errx[4] = {0, 0, 0, 0.};
+  int npoints = 3;
+  double eRef[3] = {661.6, 1173, 1333.};
+  double eFit[3] = {43137, 64502, 71250};
+  double errFit[3] = {3, 18, 20};
+  double errx[3] = {0, 0, 0.};
 
   auto g = new TGraphErrors(npoints, eRef, eFit, errx, errFit);
 
@@ -24,5 +24,5 @@ void calibration() {
   yaxis->SetTitle("Fit Value [u.a.]");
   fit->Draw("AL SAME");
   g->SetMarkerStyle(8);
-  
+
 }
