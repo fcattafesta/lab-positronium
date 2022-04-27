@@ -1,4 +1,3 @@
-#include "utilities.h"
 
 int Cut(double Energy, double UpLim, double LowLim) {
 
@@ -6,7 +5,37 @@ int Cut(double Energy, double UpLim, double LowLim) {
   return 1;
 }
 
-TH1D * MakeSpectrum(std::string treepath, int nbins, double LowLim, double UpLim) {
+// Be careful on tree cycle value: it should be the last value
+
+TH1D * MakeSpectrum(std::string treepath, std::string EnergyBranch,
+                    int nbins, double LowLim, double UpLim) {
+
+  auto f = new TFile(treepath.c_str(), "READ");
+  auto t = f->Get<TTree>("tree;2");
+
+  int nentries = t->GetEntries();
+  double data[nentries], Energy;
+
+  t->SetBranchAddress(EnergyBranch.c_str(), &Energy);
+
+  for (int i=0; i<nentries; i++) {
+    t->GetEntry(i);
+    data[i] = Energy;
+  }
+
+  auto h = new TH1D("h", "; Energy [a.u.]", nbins, LowLim, UpLim);
+
+  for (int i=0; i<nentries; i++) {
+    if (Cut(data[i], UpLim, LowLim) == 1) h->Fill(data[i]);
+  }
+
+  return h;
+
+}
+
+TH1D * CalibrateSpectrum(std::string treepath, std::string EnergyBranch,
+                         int nbins, double LowLim, double UpLim,
+                         double calOffset, double calConv) {
 
   auto f = new TFile(treepath.c_str(), "READ");
   auto t = f->Get<TTree>("tree;2");
@@ -18,7 +47,7 @@ TH1D * MakeSpectrum(std::string treepath, int nbins, double LowLim, double UpLim
 
   for (int i=0; i<nentries; i++) {
     t->GetEntry(i);
-    data[i] = Energy;
+    data[i] = (Energy - calOffset) / calConv;
   }
 
   auto h = new TH1D("h", "; Energy [a.u.]", nbins, LowLim, UpLim);

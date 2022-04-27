@@ -1,3 +1,34 @@
+#include "dataset.h"
+
+void DrawSignal(std::string treepath, int event) {
+
+  auto f = new TFile(treepath.c_str(), "READ");
+  auto t = f->Get<TTree>("tree;2"); //tree does not exist after an update (e.g. tree;1)
+
+  int nentries = t->GetEntries();
+  int v[RECORD_LENGTH];
+
+  t->SetBranchAddress("Amplitudes", &v);
+
+  for (int i=0; i<nentries; i++) {
+    auto g = new TGraph();
+    t->GetEntry(i);
+
+    for (int j=0; j<RECORD_LENGTH; j++) {
+      g->AddPoint(j, v[j]);
+    }
+
+  if (i==event) {
+    g->Draw("AL");
+    g->SetMarkerStyle(20);
+    auto xaxis = g->GetXaxis();
+    xaxis->SetTitle("Time [a.u.]");
+    auto yaxis = g->GetYaxis();
+    yaxis->SetTitle("Amplitude [a.u.]");
+    yaxis->SetTitleOffset(1.4);
+    }
+  }
+}
 
 void MyStyle(TH1D * h, TF1 * f) {
   h->SetLineColor(kBlack); h->SetLineWidth(1);
