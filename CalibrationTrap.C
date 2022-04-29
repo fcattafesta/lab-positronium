@@ -10,10 +10,10 @@ void CalibrationTrap() {
                             "figures/calibrationTrap/137Cs2704.pdf",
                             "figures/calibrationTrap/regression.pdf"},
               branchname = "EnergyTrap",
-              treename = "tree;2",
+              treename[3] = {"tree;2", "tree;2", "tree;3"},
               elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
-  double LowLim[3] = {20e3, 20e3, 20e3},
-         UpLim[3] = {80e3, 80e3, 50e3},
+  double LowLim[3] = {20e3, 20e3, 7.42e6},
+         UpLim[3] = {80e3, 80e3, 7.49e6},
          fitMin[3] = {62e3, 69e3, 41e3},
          fitMax[3] = {67e3, 74e3, 45e3};
   int nbins[3] = {200, 200, 200};
@@ -24,7 +24,7 @@ void CalibrationTrap() {
 
     TF1 *fitFunc = new TF1("fitFunc", "gaus", fitMin[i], fitMax[i]);
 
-    histos[i] = MakeSpectrum(treepath[i], treename, branchname, nbins[i], LowLim[i], UpLim[i]);
+    histos[i] = MakeSpectrum(treepath[i], treename[i], branchname, nbins[i], LowLim[i], UpLim[i]);
     results[i] = histos[i]->Fit(fitFunc, "SRLNQ");
 
     auto c = new TCanvas();
