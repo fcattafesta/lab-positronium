@@ -2,18 +2,19 @@
 
 void ComputeEnergy() {
 
-  std::string treepaths[4] = {"data/22Na.root", "data/60Co.root",
-                              "data/137Cs.root", "data/241Am.root"};
+  std::string treepaths[5] = {"data/22Na.root", "data/60Co.root",
+                              "data/137Cs.root", "data/241Am.root",
+                              "data/90Sr.root"};
 
-  /*for (auto i=0; i<4; i++) {
+  for (auto i=0; i<4; i++) {
     cout << treepaths[i] << endl;
-    EnergyTrap(treepaths[i]);
+    //EnergyTrap(treepaths[i]);
     //cout << "Trap finished" << endl;
     //EnergyMinAmp(treepaths[i]);
     //cout << "MinAmp finished" << endl;
     //EnergyThr(treepaths[i]);
     //cout << "Thr finished" << endl;
-  }*/
+  }
 
-  EnergyTrap(treepaths[3]);
+  EnergyTrap(treepaths[0]);
 }

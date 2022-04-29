@@ -1,37 +1,38 @@
 #include "scripts/spectrum.h"
 #include "scripts/plot.h"
 
-void Calibration() {
+void CalibrationTrap() {
 
-  std::string treepath[4] = {"data/60Co.root", "data/60Co.root",
-                              "data/137Cs.root", "data/241Am.root"},
-              figpath[4] = {"figures/calibration/60Co2704_1.pdf",
-                            "figures/calibration/60Co2704_2.pdf",
-                            "figures/calibration/137Cs2704.pdf",
-                            "figures/calibration/241Am2704.pdf"},
+  std::string treepath[3] = {"data/60Co.root", "data/60Co.root",
+                              "data/137Cs.root"},
+              figpath[4] = {"figures/calibrationTrap/60Co2704_1.pdf",
+                            "figures/calibrationTrap/60Co2704_2.pdf",
+                            "figures/calibrationTrap/137Cs2704.pdf",
+                            "figures/calibrationTrap/regression.pdf"},
               branchname = "EnergyTrap",
-              elementname[4] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs",
-                                "{}^{241}Am"};
-  double LowLim[4] = {20e3, 20e3, 20e3, 20e3},
-         UpLim[4] = {80e3, 80e3, 50e3, 90e3},
-         fitMin[4] = {62e3, 69e3, 42e3, 41e3},
-         fitMax[4] = {68e3, 73e3, 45e3, 45e3};
-  int nbins[4] = {200, 200, 200, 200};
-  TFitResultPtr results[4];
-  TH1D *histos[4];
+              treename = "tree;2",
+              elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
+  double LowLim[3] = {20e3, 20e3, 20e3},
+         UpLim[3] = {80e3, 80e3, 50e3},
+         fitMin[3] = {62e3, 69e3, 41e3},
+         fitMax[3] = {67e3, 74e3, 45e3};
+  int nbins[3] = {200, 200, 200};
+  TFitResultPtr results[3];
+  TH1D *histos[3];
 
-  for (int i=0; i<4; i++) {
+  for (int i=0; i<3; i++) {
 
     TF1 *fitFunc = new TF1("fitFunc", "gaus", fitMin[i], fitMax[i]);
 
-    histos[i] = MakeSpectrum(treepath[i], branchname, nbins[i], LowLim[i], UpLim[i]);
+    histos[i] = MakeSpectrum(treepath[i], treename, branchname, nbins[i], LowLim[i], UpLim[i]);
     results[i] = histos[i]->Fit(fitFunc, "SRLNQ");
 
     auto c = new TCanvas();
     histos[i]->Draw();
     fitFunc->Draw("AL SAME");
 
-    auto legend = DrawLegend(c, .25, .65, .65, .85, histos[i], fitFunc);
+    auto legend = DrawLegend(c, .25, .65, .65, .85, histos[i],
+                             fitMin[i], fitMax[i], fitFunc);
     legend->SetHeader(elementname[i].c_str(), "C");
     DrawDate(c);
     MyStyle(histos[i], fitFunc);
@@ -40,16 +41,16 @@ void Calibration() {
     c->Destructor(); fitFunc->Delete();
   }
 
-  double Ref[4] = {1173, 1333., 661.6, 59.9,};
-  double errRef[4] = {0, 0, 0, 0};
-  double fitPeak[4], errPeak[4];
+  double Ref[3] = {1173, 1333., 661.6};
+  double errRef[4] = {0, 0, 0};
+  double fitPeak[3], errPeak[3];
 
-  for (int i=0; i<4; i++) {
+  for (int i=0; i<3; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
     errPeak[i] = results[i]->GetErrors()[1];
   }
 
-  auto g = new TGraphErrors(4, Ref, fitPeak, errRef, errPeak);
+  auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
   auto calibr = new TF1("calibr", "pol1", 0, 2000);
 
@@ -62,13 +63,14 @@ void Calibration() {
   g->SetTitle("");
   g->SetMarkerStyle(8);
   auto xaxis = g->GetXaxis(); xaxis->SetTitle("Reference [keV]");
+  xaxis->SetRangeUser(0., 1500.);
   auto yaxis = g->GetYaxis(); yaxis->SetTitle("Fitted [u.a.]");
   yaxis->SetTitleOffset(1.4);
-  yaxis->SetRangeUser(calFitRes->GetParams()[0] - 5e3,
-                      TMath::MaxElement(4, fitPeak) + 5e3);
+  yaxis->SetRangeUser(calFitRes->GetParams()[0] - 1e3,
+                      TMath::MaxElement(4, fitPeak) + 1e3);
   c->Update();
   DrawDate(c);
-  auto fitLegend = new TPaveText(0.15, 0.55, 0.75, 0.9);
+  auto fitLegend = new TPaveText(.15, .65, .75, .9);
   fitLegend->SetOption("NDC NB");
   fitLegend->SetFillStyle(0);
   fitLegend->SetBorderSize(0.);
@@ -87,6 +89,6 @@ void Calibration() {
   fitLegend->AddText(sChi);
   fitLegend->Draw();
 
-  c->SaveAs("figures/calibration/regression.pdf");
+  c->SaveAs(figpath[3].c_str());
 
 }
