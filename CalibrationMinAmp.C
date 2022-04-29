@@ -3,26 +3,24 @@
 
 void CalibrationMinAmp() {
 
-  std::string treepath[4] = {"data/60Co.root", "data/60Co.root",
-                              "data/137Cs.root", "data/241Am.root"},
-              figpath[5] = {"figures/calibrationMinAmp/60Co2704_1.pdf",
+  std::string treepath[3] = {"data/60Co.root", "data/60Co.root",
+                              "data/137Cs.root"},
+              figpath[4] = {"figures/calibrationMinAmp/60Co2704_1.pdf",
                             "figures/calibrationMinAmp/60Co2704_2.pdf",
                             "figures/calibrationMinAmp/137Cs2704.pdf",
-                            "figures/calibrationMinAmp/241Am2704.pdf",
                             "figures/calibrationMinAmp/regression.pdf"},
               branchname = "EnergyMinAmp",
               treename = "tree;3",
-              elementname[4] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs",
-                                "{}^{241}Am"};
-  double LowLim[4] = {0.1e3, 0.1e3, 0.1e3, 0.1e3},
-         UpLim[4] = {1e3, 1e3, 0.45e3, 1e3},
-         fitMin[4] = {0.6e3, .68e3, .32e3, .34e3},
-         fitMax[4] = {0.68e3, .8e3, .42e3, .4e3};
-  int nbins[4] = {200, 200, 200, 200};
-  TFitResultPtr results[4];
-  TH1D *histos[4];
+              elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
+  double LowLim[3] = {0.1e3, 0.1e3, 0.1e3},
+         UpLim[3] = {1e3, 1e3, 0.45e3},
+         fitMin[3] = {0.6e3, .68e3, .32e3},
+         fitMax[3] = {0.68e3, .8e3, .42e3};
+  int nbins[4] = {200, 200, 200};
+  TFitResultPtr results[3];
+  TH1D *histos[3];
 
-  for (int i=0; i<4; i++) {
+  for (int i=0; i<3; i++) {
 
     TF1 *fitFunc = new TF1("fitFunc", "gaus", fitMin[i], fitMax[i]);
 
@@ -43,16 +41,16 @@ void CalibrationMinAmp() {
     c->Destructor(); fitFunc->Delete();
   }
 
-  double Ref[4] = {1173, 1333., 661.6, 59.9,};
-  double errRef[4] = {0, 0, 0, 0};
-  double fitPeak[4], errPeak[4];
+  double Ref[3] = {1173, 1333., 661.6};
+  double errRef[3] = {0, 0, 0};
+  double fitPeak[3], errPeak[3];
 
-  for (int i=0; i<4; i++) {
+  for (int i=0; i<3; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
     errPeak[i] = results[i]->GetErrors()[1];
   }
 
-  auto g = new TGraphErrors(4, Ref, fitPeak, errRef, errPeak);
+  auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
   auto calibr = new TF1("calibr", "pol1", 0, 2000);
 
@@ -68,7 +66,7 @@ void CalibrationMinAmp() {
   auto yaxis = g->GetYaxis(); yaxis->SetTitle("Fitted [u.a.]");
   yaxis->SetTitleOffset(1.4);
   yaxis->SetRangeUser(calFitRes->GetParams()[0] - .2e3,
-                      TMath::MaxElement(4, fitPeak) + .2e3);
+                      TMath::MaxElement(3, fitPeak) + .2e3);
   c->Update();
   DrawDate(c);
   auto fitLegend = new TPaveText(.15, .65, .75, .9);
@@ -90,6 +88,6 @@ void CalibrationMinAmp() {
   fitLegend->AddText(sChi);
   fitLegend->Draw();
 
-  c->SaveAs(figpath[4].c_str());
+  c->SaveAs(figpath[3].c_str());
 
 }

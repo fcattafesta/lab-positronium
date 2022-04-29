@@ -67,7 +67,7 @@ void CalibrationTrap() {
   auto yaxis = g->GetYaxis(); yaxis->SetTitle("Fitted [u.a.]");
   yaxis->SetTitleOffset(1.4);
   yaxis->SetRangeUser(calFitRes->GetParams()[0] - 1e3,
-                      TMath::MaxElement(4, fitPeak) + 1e3);
+                      TMath::MaxElement(3, fitPeak) + 1e3);
   c->Update();
   DrawDate(c);
   auto fitLegend = new TPaveText(.15, .65, .75, .9);
