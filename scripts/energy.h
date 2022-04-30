@@ -83,9 +83,11 @@ void EnergyMinAmp(std::string treepath) {
 
   int nentries = t->GetEntries();
   int v[RECORD_LENGTH];
-  double Energy;
+
+  double Energy, dEnergy;
 
   auto bEnergy = t->Branch("EnergyMinAmp", &Energy);
+  auto EnergyError = t->Branch("EnergyError", &dEnergy);
   t->SetBranchAddress("Amplitudes", &v);
 
   for (int i=0; i<nentries; i++) {
@@ -101,7 +103,10 @@ void EnergyMinAmp(std::string treepath) {
     g->Fit(base, "RQN");
 
     Energy = base->GetParameter(0) - TMath::MinElement(RECORD_LENGTH, g->GetY());
+    dEnergy = TMath::Sqrt(2)*base->GetParError(0);
     bEnergy->Fill();
+    EnergyError->Fill();
+
   }
   t->Write();
   f->Close();
@@ -144,7 +149,8 @@ void EnergyThr(std::string treepath) {
       if (v[k] - dv > thr && v[k+1] + dv <= thr) {
         if (t1==0) t1 = k+1;
         dE1 = dE1 + dv/TMath::Abs(v[k+1]-v[k]);
-        cout << k+1 << endl;}
+        //cout << k+1 << endl;
+      }
 
       if (v[k] + dv <= thr && v[k+1] - dv > thr) {
         t2 = k;

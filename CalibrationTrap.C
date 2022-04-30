@@ -10,12 +10,12 @@ void CalibrationTrap() {
                             "figures/calibrationTrap/137Cs2704.pdf",
                             "figures/calibrationTrap/regression.pdf"},
               branchname = "EnergyTrap",
-              treename[3] = {"tree;2", "tree;2", "tree;3"},
+              treename[3] = {"tree;2", "tree;2", "tree;2"},
               elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
-  double LowLim[3] = {20e3, 20e3, 7.42e6},
-         UpLim[3] = {80e3, 80e3, 7.49e6},
-         fitMin[3] = {62e3, 69e3, 41e3},
-         fitMax[3] = {67e3, 74e3, 45e3};
+  double LowLim[3] = {8e3, 8e3, 4e3},
+         UpLim[3] = {64e3, 64e3, 33e3},
+         fitMin[3] = {48e3, 54e3, 26.5e3},
+         fitMax[3] = {53e3, 60e3, 31e3};
   int nbins[3] = {200, 200, 200};
   TFitResultPtr results[3];
   TH1D *histos[3];

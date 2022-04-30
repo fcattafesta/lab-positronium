@@ -4,14 +4,14 @@
 void NaSpectrum() {
 
   std::string treepath = "data/22Na.root",
-              figpath = "figures/22NaSpectrum/strangepeak2804.pdf",
+              figpath = "figures/22NaSpectrum/2804.pdf",
               treename = "tree;2",
               branchname = "EnergyTrap";
 
-  double slope = 41.83, intercept = 15460;
+  double slope = 41.82, intercept = 1180;
 
   double LowLim = 100, UpLim = 1600;  // keV
-  double fitMin = 625, fitMax = 690;
+  double fitMin = 470, fitMax = 545;
   int nbins = 300;
 
   auto h = CalibrateSpectrum(treepath, treename, branchname,
@@ -31,6 +31,6 @@ void NaSpectrum() {
 
   MyStyle(h, fitFunc);
   auto xaxis = h->GetXaxis(); xaxis->SetTitle("Energy [keV]");
-  c1->SaveAs(figpath.c_str());
+  //c1->SaveAs(figpath.c_str());
 
 }
