@@ -52,7 +52,7 @@ void CalibrationTrap() {
 
   auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
-  auto calibr = new TF1("calibr", "pol1", 0, 2000);
+  auto calibr = new TF1("calibr", "pol1", -1., 2000);
 
   auto calFitRes = g->Fit(calibr, "SRNQ EX0");
 
@@ -60,14 +60,15 @@ void CalibrationTrap() {
 
   g->Draw("AP SAME");
   calibr->Draw("AL SAME");
+  calibr->SetLineColor(46);
   g->SetTitle("");
-  g->SetMarkerStyle(8);
+  g->SetMarkerStyle(8); g->SetMarkerSize(1.);
   auto xaxis = g->GetXaxis(); xaxis->SetTitle("Reference [keV]");
-  xaxis->SetRangeUser(0., 1500.);
+  xaxis->SetLimits(0., 1500.);
   auto yaxis = g->GetYaxis(); yaxis->SetTitle("Fitted [u.a.]");
   yaxis->SetTitleOffset(1.4);
-  yaxis->SetRangeUser(calFitRes->GetParams()[0] - 1e3,
-                      TMath::MaxElement(3, fitPeak) + 1e3);
+  yaxis->SetRangeUser(calFitRes->GetParams()[0] - 10e3,
+                      TMath::MaxElement(3, fitPeak) + 5e3);
   c->Update();
   DrawDate(c);
   auto fitLegend = new TPaveText(.15, .65, .75, .9);

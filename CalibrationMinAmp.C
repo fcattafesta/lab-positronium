@@ -60,9 +60,11 @@ void CalibrationMinAmp() {
 
   g->Draw("AP SAME");
   calibr->Draw("AL SAME");
+  calibr->SetLineColor(46);
   g->SetTitle("");
-  g->SetMarkerStyle(8);
+  g->SetMarkerStyle(8); g->SetMarkerSize(1.);
   auto xaxis = g->GetXaxis(); xaxis->SetTitle("Reference [keV]");
+  xaxis->SetLimits(0., 1500.);
   auto yaxis = g->GetYaxis(); yaxis->SetTitle("Fitted [u.a.]");
   yaxis->SetTitleOffset(1.4);
   yaxis->SetRangeUser(calFitRes->GetParams()[0] - .2e3,

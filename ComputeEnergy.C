@@ -6,6 +6,8 @@ void ComputeEnergy() {
                               "data/137Cs.root", "data/241Am.root",
                               "data/90Sr.root"};
 
+  std::string bkgtree[2] = {"data/bkg.root", "data/bkg_noise.root"};
+
   for (auto i=0; i<4; i++) {
     cout << treepaths[i] << endl;
     //EnergyTrap(treepaths[i]);
@@ -16,5 +18,9 @@ void ComputeEnergy() {
     //cout << "Thr finished" << endl;
   }
 
-  EnergyTrap(treepaths[0]);
+  for (auto i=0; i<2; i++) {
+    EnergyTrap(bkgtree[i]);
+  }
+
+  //EnergyTrap(treepaths[0]);
 }
