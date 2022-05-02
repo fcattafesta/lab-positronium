@@ -1,19 +1,19 @@
 #include "scripts/spectrum.h"
 #include "scripts/plot.h"
 
-void CalibrationTrap() {
+void CalibrationIntegral() {
 
   std::string treepath[3] = {"data/60Co.root", "data/60Co.root",
                               "data/137Cs.root"},
-              figpath[4] = {"figures/calibrationTrap/60Co2704_1.pdf",
-                            "figures/calibrationTrap/60Co2704_2.pdf",
-                            "figures/calibrationTrap/137Cs2704.pdf",
-                            "figures/calibrationTrap/regression.pdf"},
-              branchname = "EnergyTrap2",
-              treename = {"tree;3"},
+              figpath[4] = {"figures/calibrationIntegral/60Co2704_1.pdf",
+                            "figures/calibrationIntegral/60Co2704_2.pdf",
+                            "figures/calibrationIntegral/137Cs2704.pdf",
+                            "figures/calibrationIntegral/regression.pdf"},
+              branchname = "EnergyIntegral",
+              treename = {"tree;2"},
               elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
   double LowLim[3] = {5e3, 5e3, 5e3},
-         UpLim[3] = {64e3, 64e3, 33e3},
+         UpLim[3] = {65e3, 65e3, 32e3},
          fitMin[3] = {48e3, 54e3, 26.5e3},
          fitMax[3] = {53e3, 60e3, 31e3};
   int nbins[3] = {200, 200, 200};
