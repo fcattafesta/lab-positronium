@@ -1,6 +1,6 @@
 #include "dataset.h"
 
-void EnergyTrap(std::string treepath) {
+void EnergyIntegral(std::string treepath, int low, int up) {
 
   auto f = new TFile(treepath.c_str(), "UPDATE");
   auto t = f->Get<TTree>("tree;1"); //tree does not exist after an update (e.g. tree;1)
@@ -9,7 +9,8 @@ void EnergyTrap(std::string treepath) {
   int v[RECORD_LENGTH];
   double Energy;
 
-  auto bEnergy = t->Branch("EnergyTrap", &Energy);
+  auto bEnergy = t->Branch("EnergyIntegral", &Energy);
+
   t->SetBranchAddress("Amplitudes", &v);
 
   for (int i=0; i<nentries; i++) {
@@ -27,9 +28,50 @@ void EnergyTrap(std::string treepath) {
     g->Fit(base, "RQN");
     double height = base->GetParameter(0);
 
-    Energy = (height * RECORD_LENGTH) - signal->Integral(0, RECORD_LENGTH-1, 1e-3);
+    Energy = (height * (up-low)) - signal->Integral(low, up, 1e-3);
     bEnergy->Fill();
   }
+  t->Write();
+  f->Close();
+}
+
+void EnergyTrap(std::string treepath, int low, int up) {
+
+  auto f = new TFile(treepath.c_str(), "UPDATE");
+  auto t = f->Get<TTree>("tree;1"); //tree does not exist after an update (e.g. tree;1)
+
+  int nentries = t->GetEntries();
+  int v[RECORD_LENGTH];
+  double Energy, dEnergy;
+
+  auto bEnergy = t->Branch("EnergyTrap2", &Energy);
+  auto EnergyError = t->Branch("EnergyError", &dEnergy);
+  t->SetBranchAddress("Amplitudes", &v);
+
+  for (int i=0; i<nentries; i++) {
+    auto g = new TGraph();
+    t->GetEntry(i);
+
+    for (int j=0; j<RECORD_LENGTH; j++) {
+      g->AddPoint(j, v[j]);
+    }
+
+    Energy=0; dEnergy=0;
+
+    TF1 *base = new TF1("base", "[0]", 0, 200);
+    g->Fit(base, "RQN");
+
+    double height = base->GetParameter(0);
+    double dh = base->GetParError(0);
+
+    for (int j=low; j<up-1; j++) {
+      Energy = Energy + height - (v[j] + v[j+1])/2;
+      dEnergy = dEnergy + dh*TMath::Sqrt(4)/2;
+    }
+    bEnergy->Fill();
+    EnergyError->Fill();
+  }
+
   t->Write();
   f->Close();
 }
@@ -72,13 +114,17 @@ void EnergyThr(std::string treepath) {
 
   int nentries = t->GetEntries();
   int v[RECORD_LENGTH];
-  double Energy;
+  double Energy, dEnergy;
 
   auto bEnergy = t->Branch("EnergyThr", &Energy);
+  auto EnergyError = t->Branch("EnergyError", &dEnergy);
+
   t->SetBranchAddress("Amplitudes", &v);
 
   for (int i=0; i<nentries; i++) {
     auto g = new TGraph();
+
+    double dE1=0, dE2=0;
 
     t->GetEntry(i);
 
@@ -90,17 +136,24 @@ void EnergyThr(std::string treepath) {
     g->Fit(base, "RQN");
 
     double Amp = base->GetParameter(0) - TMath::MinElement(RECORD_LENGTH, g->GetY());
-    double thr = 0.1 * Amp;
-    int t1=1, t2=10;
+    double dv = base->GetParError(0);
+    double thr = Amp - 0.1 * Amp;
+    int t1 = 0, t2 = 0;
 
     for (int k=0; k<RECORD_LENGTH-1; k++) {
-      if (v[k] > thr && v[k+1] <= thr) {
-        t1 = k+1;
+      if (v[k] - dv > thr && v[k+1] + dv <= thr) {
+        if (t1==0) t1 = k+1;
+        dE1 = dE1 + dv/TMath::Abs(v[k+1]-v[k]);
         cout << k+1 << endl;}
-      if (v[k] <= thr && v[k+1] > thr) t2 = k;
+
+      if (v[k] + dv <= thr && v[k+1] - dv > thr) {
+        t2 = k;
+        dE2 = dE2 + dv/TMath::Abs(v[k+1]-v[k]);
+      }
     }
 
     Energy = t2 - t1;
+    dEnergy = TMath::Sqrt(dE1*dE1 + dE2*dE2);
     //cout << Energy << endl;
     bEnergy->Fill();
 
