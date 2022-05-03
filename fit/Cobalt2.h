@@ -1,19 +1,18 @@
-#include "../scripts/spectrum.h"
-#include "../scripts/plot.h"
+#include "Cobalt1.h"
 
-double background(double *x, double *p) {
+double background2(double *x, double *p) {
   return p[0] + p[1] * x[0];
 }
 
-double signal(double *x, double *p) {
+double signal2(double *x, double *p) {
   return p[0] * exp(-0.5 * pow(((x[0] - p[1]) / p[2]), 2));
 }
 
-double func(double *x, double *p) {
-  return signal(x, p) + background(x, &p[3]);
+double func2(double *x, double *p) {
+  return signal2(x, p) + background2(x, &p[3]);
 }
 
-void Cobalt2() {
+TFitResultPtr Cobalt2() {
 
   std::string treepath = "data/60Co.root",
               figpath = "figures/fit/60Co_2.pdf",
@@ -30,12 +29,12 @@ void Cobalt2() {
   TF1 *bkg = new TF1("bkg", "pol1", 60e3, 66e3);
   bkg->SetParameters(10., -1e-5);
 
-  h->Fit(bkg, "SRLN");
+  h->Fit(bkg, "SRLNQ");
 
-  TF1 *fitFunc = new TF1("fitFunc", func, fitMin, fitMax, 5);
+  TF1 *fitFunc = new TF1("fitFunc", func2, fitMin, fitMax, 5);
   fitFunc->SetParameters(.2e3, 56e3, 1.1e3, bkg->GetParameter(0), bkg->GetParameter(1));
 
-  auto results = h->Fit(fitFunc, "SRLN");
+  auto results = h->Fit(fitFunc, "SRLNQ");
 
   auto c = new TCanvas();
   h->Draw();
@@ -47,5 +46,8 @@ void Cobalt2() {
   DrawDate(c);
   MyStyle(h, fitFunc);
   c->SaveAs(figpath.c_str());
+  c->Destructor();
+
+  return results;
 
 }

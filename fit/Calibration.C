@@ -1,48 +1,13 @@
-#include "scripts/spectrum.h"
-#include "scripts/plot.h"
+#include "Cobalt2.h"
 
-void CalibrationIntegral() {
+void Calibration() {
 
-  std::string treepath[3] = {"data/60Co.root", "data/60Co.root",
-                              "data/137Cs.root"},
-              figpath[4] = {"figures/calibrationIntegral/60Co2704_1.pdf",
-                            "figures/calibrationIntegral/60Co2704_2.pdf",
-                            "figures/calibrationIntegral/137Cs2704.pdf",
-                            "figures/calibrationIntegral/regression.pdf"},
-              branchname = "EnergyIntegral",
-              treename = {"tree;2"},
-              elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
-  double LowLim[3] = {5e3, 5e3, 5e3},
-         UpLim[3] = {65e3, 65e3, 32e3},
-         fitMin[3] = {48e3, 54e3, 26.5e3},
-         fitMax[3] = {53e3, 60e3, 31e3};
-  int nbins[3] = {200, 200, 200};
-  TFitResultPtr results[3];
-  TH1D *histos[3];
+  std::string figpath = "figures/fit/regression.pdf";
 
-  for (int i=0; i<3; i++) {
+  TFitResultPtr results[3] = {Caesium(), Cobalt1(), Cobalt2()};
 
-    TF1 *fitFunc = new TF1("fitFunc", "gaus", fitMin[i], fitMax[i]);
-
-    histos[i] = MakeSpectrum(treepath[i], treename, branchname, nbins[i], LowLim[i], UpLim[i]);
-    results[i] = histos[i]->Fit(fitFunc, "SRLNQ");
-
-    auto c = new TCanvas();
-    histos[i]->Draw();
-    fitFunc->Draw("AL SAME");
-
-    auto legend = DrawLegend(c, .25, .65, .65, .85, histos[i],
-                             fitMin[i], fitMax[i], fitFunc);
-    legend->SetHeader(elementname[i].c_str(), "C");
-    DrawDate(c);
-    MyStyle(histos[i], fitFunc);
-    c->SaveAs(figpath[i].c_str());
-
-    c->Destructor(); fitFunc->Delete();
-  }
-
-  double Ref[3] = {1173, 1333., 661.6};
-  double errRef[4] = {0, 0, 0};
+  double Ref[3] = {661.6, 1173, 1333.};
+  double errRef[3] = {0, 0, 0};
   double fitPeak[3], errPeak[3];
 
   for (int i=0; i<3; i++) {
@@ -132,8 +97,7 @@ void CalibrationIntegral() {
   resYaxis->SetTitleSize(.1); resYaxis->SetTitleOffset(.5);
   resYaxis->SetLabelSize(.08);
 
-  c->SaveAs(figpath[3].c_str());
 
-  c->SaveAs(figpath[3].c_str());
+  c->SaveAs(figpath.c_str());
 
 }

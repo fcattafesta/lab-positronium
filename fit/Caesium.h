@@ -1,19 +1,19 @@
 #include "../scripts/spectrum.h"
 #include "../scripts/plot.h"
 
-double background(double *x, double *p) {
+double background0(double *x, double *p) {
   return p[0] + p[1] * x[0];
 }
 
-double signal(double *x, double *p) {
+double signal0(double *x, double *p) {
   return p[0] * exp(-0.5 * pow(((x[0] - p[1]) / p[2]), 2));
 }
 
-double func(double *x, double *p) {
-  return signal(x, p) + background(x, &p[3]);
+double func0(double *x, double *p) {
+  return signal0(x, p) + background0(x, &p[3]);
 }
 
-void Caesium() {
+TFitResultPtr Caesium() {
 
   std::string treepath = "data/137Cs.root",
               figpath = "figures/fit/137Cs.pdf",
@@ -30,12 +30,12 @@ void Caesium() {
   TF1 *bkg = new TF1("bkg", "pol1", 22e3, 26e3);
   bkg->SetParameters(100, -1.3);
 
-  h->Fit(bkg, "SRLN");
+  h->Fit(bkg, "SRLNQ");
 
-  TF1 *fitFunc = new TF1("fitFunc", func, fitMin, fitMax, 5);
+  TF1 *fitFunc = new TF1("fitFunc", func0, fitMin, fitMax, 5);
   fitFunc->SetParameters(2.5e3, 28e3, .8e3, bkg->GetParameter(0), bkg->GetParameter(1));
 
-  auto results = h->Fit(fitFunc, "SRLN");
+  auto results = h->Fit(fitFunc, "SRLNQ");
 
   auto c = new TCanvas();
   h->Draw();
@@ -47,5 +47,8 @@ void Caesium() {
   DrawDate(c);
   MyStyle(h, fitFunc);
   c->SaveAs(figpath.c_str());
+  c->Destructor();
+
+  return results;
 
 }
