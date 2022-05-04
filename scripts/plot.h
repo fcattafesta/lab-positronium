@@ -79,11 +79,11 @@ TLegend * DrawLegend(TCanvas *c, double x1, double y1, double x2, double y2,
   fitLegend->SetTextAlign(11);
 
   auto sEntries = Form("Entries: %.0f", h->GetEntries());
-  auto sFitEntries = Form("Fit Entries: %.0f", h->Integral(h->FindBin(fitMin),
+  auto sFitEntries = Form(" Fit Entries: %.0f", h->Integral(h->FindBin(fitMin),
                                                            h->FindBin(fitMax)));
-  auto sMean = Form("Mean: %.2f #pm %.2f", peak->GetParameter(1), peak->GetParError(1));
-  auto sSigma = Form("Sigma: %.2f #pm %.2f", peak->GetParameter(2), peak->GetParError(2));
-  auto sResolution = Form("Resolution: %.2f%%", (peak->GetParameter(2)/peak->GetParameter(1))*100);
+  auto sMean = Form(" Mean: %.2f #pm %.2f", peak->GetParameter(1), peak->GetParError(1));
+  auto sSigma = Form(" Sigma: %.2f #pm %.2f", peak->GetParameter(2), peak->GetParError(2));
+  auto sResolution = Form(" Resolution: %.2f%%", (peak->GetParameter(2)/peak->GetParameter(1))*100);
   fitLegend->AddText(sEntries);
   fitLegend->AddText("Fit results:");
   fitLegend->AddText(sFitEntries);

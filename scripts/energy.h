@@ -42,9 +42,9 @@ void EnergyTrap(std::string treepath, int low, int up) {
 
   int nentries = t->GetEntries();
   int v[RECORD_LENGTH];
-  double Energy, dEnergy;
+  double Energy, dEnergy, dEnergy_2;
 
-  auto bEnergy = t->Branch("EnergyTrap2", &Energy);
+  auto bEnergy = t->Branch("EnergyTrap", &Energy);
   auto EnergyError = t->Branch("EnergyError", &dEnergy);
   t->SetBranchAddress("Amplitudes", &v);
 
@@ -56,7 +56,7 @@ void EnergyTrap(std::string treepath, int low, int up) {
       g->AddPoint(j, v[j]);
     }
 
-    Energy = 0; dEnergy = 0;
+    Energy = 0; dEnergy = 0; dEnergy_2=0;
 
     TF1 *base = new TF1("base", "[0]", 0, 200);
     g->Fit(base, "RQN");
@@ -66,8 +66,10 @@ void EnergyTrap(std::string treepath, int low, int up) {
 
     for (int j=low; j<up-1; j++) {
       Energy = Energy + height - (v[j] + v[j+1])/2;
-      dEnergy = dEnergy + dh*TMath::Sqrt(4)/2;
+      dEnergy_2 = dEnergy_2 + 2*dh*dh;
     }
+
+    dEnergy = TMath::Sqrt(dEnergy_2);
     bEnergy->Fill();
     EnergyError->Fill();
   }

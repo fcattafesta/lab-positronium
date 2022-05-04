@@ -10,7 +10,7 @@ void CalibrationMinAmp() {
                             "figures/calibrationMinAmp/137Cs2704.pdf",
                             "figures/calibrationMinAmp/regression.pdf"},
               branchname = "EnergyMinAmp",
-              treename = "tree;4",
+              treename = "tree;3",
               elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
   double LowLim[3] = {0.1e3, 0.1e3, 0.1e3},
          UpLim[3] = {1e3, 1e3, 0.45e3},
@@ -42,17 +42,20 @@ void CalibrationMinAmp() {
   }
 
   double Ref[3] = {1173, 1333., 661.6};
-  double errRef[3] = {0, 0, 0};
+  double errRef[4] = {0, 0, 0};
+  double errStat, errSyst;
   double fitPeak[3], errPeak[3];
 
   for (int i=0; i<3; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
-    errPeak[i] = results[i]->GetErrors()[1];
+    errStat = results[i]->GetErrors()[1];
+    errSyst = StatEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
+    errPeak[i] = errStat + errSyst;
   }
 
   auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
-  auto calibr = new TF1("calibr", "pol1", 0, 2000);
+  auto calibr = new TF1("calibr", "[0]*x+[1]*x*x", 0, 2000);
 
   auto calFitRes = g->Fit(calibr, "SRNQ EX0");
 
