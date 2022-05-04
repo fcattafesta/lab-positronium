@@ -8,7 +8,7 @@ void NaSpectrum() {
               treename = "tree;2",
               branchname = "EnergyTrap";
 
-  double slope = 41.82, intercept = 1180;
+  double slope[2] = [41.82, ], intercept[2] = [1180, ];
 
   double LowLim = 100, UpLim = 1600;  // keV
   double fitMin = 470, fitMax = 545;
@@ -20,7 +20,7 @@ void NaSpectrum() {
   auto fitFunc = new TF1("fitFunc", "gaus", fitMin, fitMax);
 
   auto c1 = new TCanvas();
-  auto result = h->Fit(fitFunc, "SRLNQ");
+  auto result = h[0]->Fit(fitFunc, "SRLNQ");
   h->Draw();
   fitFunc->Draw("AL SAME");
 

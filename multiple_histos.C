@@ -1,4 +1,4 @@
-#include "scripts/utilities.h"
+#include "scripts/spectrum.h"
 
 void multiple_histos() {
 

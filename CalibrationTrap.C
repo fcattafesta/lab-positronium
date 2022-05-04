@@ -9,8 +9,8 @@ void CalibrationTrap() {
                             "figures/calibrationTrap/60Co2704_2.pdf",
                             "figures/calibrationTrap/137Cs2704.pdf",
                             "figures/calibrationTrap/regression.pdf"},
-              branchname = "EnergyTrap2",
-              treename = {"tree;3"},
+              branchname = "EnergyTrap",
+              treename = "tree;2",
               elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
   double LowLim[3] = {5e3, 5e3, 5e3},
          UpLim[3] = {64e3, 64e3, 33e3},
@@ -43,16 +43,20 @@ void CalibrationTrap() {
 
   double Ref[3] = {1173, 1333., 661.6};
   double errRef[4] = {0, 0, 0};
+  double errStat, errSyst;
   double fitPeak[3], errPeak[3];
 
   for (int i=0; i<3; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
-    errPeak[i] = results[i]->GetErrors()[1];
+    errStat = results[i]->GetErrors()[1];
+    errSyst = StatEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
+    errPeak[i] = errStat + errSyst;
+    cout << errSyst <<endl;
   }
 
   auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
-  auto calibr = new TF1("calibr", "pol1", -1., 2000);
+  auto calibr = new TF1("calibr", "[0]*x+ [1]*x*x", -1., 2000);
 
   auto calFitRes = g->Fit(calibr, "SRNQ EX0");
 
@@ -92,9 +96,9 @@ void CalibrationTrap() {
   fitLegend->SetTextSize(.05);
   fitLegend->SetTextAlign(11);
 
-  auto sIntercept = Form("Intercept: %.0f #pm %.0f [u.a.]", calFitRes->GetParams()[0],
+  auto sIntercept = Form("Intercept: %.4f #pm %.4f [u.a.]", calFitRes->GetParams()[0],
                                                      calFitRes->GetErrors()[0]);
-  auto sSlope = Form("Slope: %.2f #pm %.2f [u.a./keV]", calFitRes->GetParams()[1],
+  auto sSlope = Form("Slope: %.4f #pm %.4f [u.a./keV]", calFitRes->GetParams()[1],
                                              calFitRes->GetErrors()[1]);
   auto sChi = Form("#chi^{2}/ndof: %.2f/%.0u", calFitRes->Chi2(), calFitRes->Ndf());
   fitLegend->AddText("Fit results:");
