@@ -16,8 +16,8 @@ TFitResultPtr Cobalt2() {
 
   std::string treepath = "data/60Co.root",
               figpath = "figures/fit/60Co_2.pdf",
-              branchname = "EnergyTrap2",
-              treename = "tree;3",
+              branchname = "EnergyTrap",
+              treename = "tree;2",
               elementname = "{}^{60}Co";
 
   double LowLim = 53e3, UpLim = 67e3;
@@ -94,7 +94,7 @@ TFitResultPtr Cobalt2() {
 
   pad2->Update();
 
-  c->SaveAs(figpath.c_str());
+  //c->SaveAs(figpath.c_str());
   c->Destructor();
 
   return results;

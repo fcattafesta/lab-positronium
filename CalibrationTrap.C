@@ -42,7 +42,7 @@ void CalibrationTrap() {
   }
 
   double Ref[3] = {1173, 1333., 661.6};
-  double errRef[4] = {0, 0, 0};
+  double errRef[3] = {0, 0, 0};
   double errStat, errSyst;
   double fitPeak[3], errPeak[3];
 

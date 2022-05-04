@@ -1,25 +1,37 @@
-#include "Cobalt2.h"
+#include "scripts/CalibrationFunctions.h"
 
 void Calibration() {
 
-  std::string figpath = "figures/fit/regression.pdf";
+  //std::string figpath = "figures/fit/regression.pdf";
+  std::string treepath[3] = {"data/60Co.root", "data/60Co.root", "data/137Cs.root"},
+              branchname = "EnergyTrap", treename = "tree;2";
 
-  TFitResultPtr results[3] = {Caesium(), Cobalt1(), Cobalt2()};
+  double fitMin[3] = {40e3, 53e3, 22e3}, fitMax[3] = {53e3, 67e3, 32e3};
 
-  double Ref[3] = {661.6, 1173, 1333.};
+
+  TFitResultPtr results[3] = {Cobalt1(), Cobalt2(), Caesium()};
+
+  double Ref[3] = {1173, 1333., 661.6};
   double errRef[3] = {0, 0, 0};
+  double errStat, errSyst;
   double fitPeak[3], errPeak[3];
 
   for (int i=0; i<3; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
-    errPeak[i] = results[i]->GetErrors()[1];
+    errStat = results[i]->GetErrors()[1];
+    errSyst = StatEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
+    errPeak[i] = errStat + errSyst;
+    cout << errSyst <<endl;
   }
 
   auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
   auto calibr = new TF1("calibr", "pol1", -1., 2000);
+  //calibr->FixParameter(0, 0.);
 
-  auto calFitRes = g->Fit(calibr, "SRNQ EX0");
+
+
+  auto calFitRes = g->Fit(calibr, "SRN EX0");
 
   auto c = new TCanvas(); c->SetGrid();
 
@@ -57,14 +69,16 @@ void Calibration() {
   fitLegend->SetTextSize(.05);
   fitLegend->SetTextAlign(11);
 
-  auto sIntercept = Form("Intercept: %.0f #pm %.0f [u.a.]", calFitRes->GetParams()[0],
+  auto sIntercept = Form("Intercept: %.4f #pm %.4f [u.a.]", calFitRes->GetParams()[0],
                                                      calFitRes->GetErrors()[0]);
-  auto sSlope = Form("Slope: %.2f #pm %.2f [u.a./keV]", calFitRes->GetParams()[1],
+  auto sSlope = Form("Slope: %.4f #pm %.4f [u.a./keV]", calFitRes->GetParams()[1],
                                              calFitRes->GetErrors()[1]);
+  auto sCorr = Form("Correlation: %.4f", calFitRes->Correlation(0,1));
   auto sChi = Form("#chi^{2}/ndof: %.2f/%.0u", calFitRes->Chi2(), calFitRes->Ndf());
   fitLegend->AddText("Fit results:");
   fitLegend->AddText(sIntercept);
   fitLegend->AddText(sSlope);
+  fitLegend->AddText(sCorr);
   fitLegend->AddText(sChi);
   fitLegend->Draw();
 
@@ -98,6 +112,6 @@ void Calibration() {
   resYaxis->SetLabelSize(.08);
 
 
-  c->SaveAs(figpath.c_str());
+  //c->SaveAs(figpath.c_str());
 
 }

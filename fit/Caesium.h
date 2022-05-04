@@ -23,8 +23,8 @@ TFitResultPtr Caesium() {
 
   std::string treepath = "data/137Cs.root",
               figpath = "figures/fit/137Cs.pdf",
-              branchname = "EnergyTrap2",
-              treename = "tree;3",
+              branchname = "EnergyTrap",
+              treename = "tree;2",
               elementname = "{}^{137}Cs";
 
   double LowLim = 22e3, UpLim = 32e3;
@@ -101,7 +101,7 @@ TFitResultPtr Caesium() {
   resYaxis->SetTitleSize(.1); resYaxis->SetTitleOffset(.5);
   resYaxis->SetLabelSize(.08);
 
-  c->SaveAs(figpath.c_str());
+  //c->SaveAs(figpath.c_str());
   c->Destructor();
 
   cout << results->Prob() << endl;

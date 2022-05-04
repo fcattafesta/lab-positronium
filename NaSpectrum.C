@@ -1,18 +1,37 @@
 #include "scripts/spectrum.h"
 #include "scripts/plot.h"
 
+Bool_t reject = kTRUE;
+
+double bkg_Na(double *x, double *p) {
+  if (reject && x[0]>=540 && x[0]<=550) {
+    TF1::RejectPoint();
+    return 0;
+  }
+  return p[0] + p[1] * x[0] + p[2] * x[0] * x[0];
+}
+
+double signal(double *x, double *p) {
+  return p[0] * exp(-0.5 * pow(((x[0] - p[1]) / p[2]), 2));
+}
+
+double f_Na(double *x, double *p) {
+  return signal(x, p) + bkg_Na(x, &p[3]);
+}
+
 void NaSpectrum() {
 
   std::string treepath = "data/22Na.root",
               figpath = "figures/22NaSpectrum/2804.pdf",
               treename = "tree;2",
-              branchname = "EnergyTrap";
+              branchname = "EnergyTrap",
+              elementname = "{}^{22}Na";
 
-  double cte = 1043, d_cte=31, slope = 41.46, d_slope=0.04, corr = -0.952;
+  double cte = 1031, d_cte=30, slope = 41.49, d_slope=0.03, corr = -0.952;
 
-  double LowLim = 100, UpLim = 1600;  // keV
-  double fitMin = 470, fitMax = 545;
-  int nbins = 300;
+  double LowLim = .1e3, UpLim = 1.6e3;
+  double fitMin = .35e3, fitMax = .6e3;
+  int nbins = 100;
 
   double error=0;
   int idx=0;
@@ -22,31 +41,20 @@ void NaSpectrum() {
   auto dh = CalibrationError(treepath, treename, branchname, "EnergyError",
                             nbins, LowLim, UpLim, cte, d_cte, slope, d_slope, corr);
 
-  auto fitFunc = new TF1("fitFunc", "gaus", fitMin, fitMax);
+  TF1 *bkg = new TF1("bkg", bkg_Na, fitMin, fitMax, 3);
+  bkg->SetParameters(.3e3, -0.3, .3);
 
-  auto c1 = new TCanvas();
-  auto result = h->Fit(fitFunc, "SRLNQ");
-  h->Draw();
-  for (int j=0; j<h->GetEntries(); j++) {
-    if (Cut(h->GetBinContent(j), fitMin, fitMax) ==1) {
-      error = error + dh->GetBinContent(j);
-      idx ++;
-    }
-  }
+  h->Fit(bkg, "SRLNQ");
 
-  fitFunc->Draw("AL SAME");
+  reject = kFALSE;
 
-  error = error/idx;
-  cout << "Errore sistematico = " << error << endl;
+  TF1 *fitFunc = new TF1("fitFunc", f_Na, fitMin, fitMax, 6);
+  fitFunc->SetParameters(1.2e3, .5e3, .02e3,
+                         bkg->GetParameter(0), bkg->GetParameter(1),
+                         bkg->GetParameter(2));
 
+  auto results = h->Fit(fitFunc, "SRLN");
 
-  auto legend = DrawLegend(c1, .35, .65, .65, .85, h, fitMin, fitMax, fitFunc);
-  legend->SetHeader("^{22}Na", "C");
-
-  DrawDate(c1);
-
-  MyStyle(h, fitFunc);
-  auto xaxis = h->GetXaxis(); xaxis->SetTitle("Energy [keV]");
-  //c1->SaveAs(figpath.c_str());
+  DrawCalFits(h, figpath, elementname, fitFunc, nbins, fitMin, fitMax, LowLim, UpLim, results);
 
 }

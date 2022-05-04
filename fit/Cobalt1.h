@@ -22,8 +22,8 @@ TFitResultPtr Cobalt1() {
 
   std::string treepath = "data/60Co.root",
               figpath = "figures/fit/60Co_1.pdf",
-              branchname = "EnergyTrap2",
-              treename = "tree;3",
+              branchname = "EnergyTrap",
+              treename = "tree;2",
               elementname = "{}^{60}Co";
 
   double LowLim = 40e3, UpLim = 53e3;
@@ -39,7 +39,7 @@ TFitResultPtr Cobalt1() {
 
   reject1 = kFALSE;
 
-  TF1 *fitFunc = new TF1("fitFunc", func1, fitMin, fitMax, 6);
+  TF1 fitFunc = new TF1("fitFunc", func1, fitMin, fitMax, 6);
   fitFunc->SetParameters(.2e3, 49e3, 1.1e3,
                          bkg->GetParameter(0), bkg->GetParameter(1),
                          bkg->GetParameter(2));
@@ -59,7 +59,7 @@ TFitResultPtr Cobalt1() {
   pad2->Draw();
 
   pad1->cd();
-  
+
   h->Draw();
   fitFunc->Draw("AL SAME");
 
@@ -100,7 +100,7 @@ TFitResultPtr Cobalt1() {
   resYaxis->SetTitleSize(.1); resYaxis->SetTitleOffset(.5);
   resYaxis->SetLabelSize(.08);
 
-  c->SaveAs(figpath.c_str());
+  //c->SaveAs(figpath.c_str());
   c->Destructor();
 
   return results;

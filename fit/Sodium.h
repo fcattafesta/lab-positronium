@@ -23,8 +23,8 @@ TFitResultPtr Sodium() {
 
   std::string treepath = "data/22Na.root",
               figpath = "figures/fit/22Na_pol2.pdf",
-              branchname = "EnergyTrap2",
-              treename = "tree;3",
+              branchname = "EnergyTrap",
+              treename = "tree;2",
               elementname = "{}^{22}Na";
 
   double calConv = 41.48, calOffset = 1036;
@@ -34,7 +34,10 @@ TFitResultPtr Sodium() {
   int nbins = 100;
 
   auto h = CalibrateSpectrum(treepath, treename, branchname, nbins,
-                             LowLim, UpLim, calConv, calOffset);
+                              LowLim, UpLim, calConv, calOffset);
+  auto dh = CalibrationError(treepath, treename, branchname, "EnergyError",
+                              nbins, LowLim, UpLim, cte, d_cte, slope, d_slope, corr);
+
 
   TF1 *bkg = new TF1("bkg", background, fitMin, fitMax, 3);
   bkg->SetParameters(.3e3, -0.3, .3);
@@ -101,7 +104,9 @@ TFitResultPtr Sodium() {
   resYaxis->SetTitle("Norm. res.");
   resYaxis->SetTitleSize(.1); resYaxis->SetTitleOffset(.5);
   resYaxis->SetLabelSize(.08);
+
   c->SaveAs(figpath.c_str());
+
 
   return results;
 
