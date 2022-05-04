@@ -17,7 +17,7 @@ void Background() {
   TFitResultPtr results;
   TH1D *histos[2];
 
-  for (int i=0; i<2; i++) {
+  /*for (int i=0; i<2; i++) {
 
     TF1 *fitFunc = new TF1("fitFunc", "gaus", fitMin[i], fitMax[i]);
 
@@ -59,8 +59,9 @@ void Background() {
 
     DrawDate(c);
     MyStyle(histos[i], fitFunc);
-    c->SaveAs(figpath[i].c_str());
+    //c->SaveAs(figpath[i].c_str());
 
     c->Destructor(); fitFunc->Delete();
-    }
+  }*/
+    DrawSignal(treepath[0], 10);
 }
