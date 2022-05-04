@@ -10,7 +10,17 @@ void ComputeEnergy() {
 
   std::string bkgtree[2] = {"data/bkg.root", "data/bkg_noise.root"};
 
+  std::string treeam = "data/241Am/Noise_50thr.root";
+
+  std::string treedist[3] = {"data/dist/137Cs_8cm.root",
+                             "data/dist/137Cs_16cm.root",
+                             "data/dist/137Cs_24cm.root"};
+
   int low = 200, up = 800;
+
+  for (int i=0; i<3; i++) {
+    EnergyTrap(treedist[i], low, up);
+  }
 
   /*
   for (auto i=4; i<5; i++) {
@@ -26,7 +36,7 @@ void ComputeEnergy() {
   }
   */
 
-
+  /*
   for (auto i=0; i<2; i++) {
     cout << bkgtree[i] << endl;
     EnergyIntegral(bkgtree[i], low, up);
@@ -35,7 +45,9 @@ void ComputeEnergy() {
     cout << "Trap finished" << endl;
     EnergyMinAmp(bkgtree[i]);
     cout << "MinAmp finished" << endl;
-  }
+  }*/
+
+  //EnergyMinAmp(treeam);
 
 
 }

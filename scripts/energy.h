@@ -142,13 +142,13 @@ void EnergyThr(std::string treepath) {
 
     double Amp = base->GetParameter(0) - TMath::MinElement(RECORD_LENGTH, g->GetY());
     double dv = base->GetParError(0);
-    double thr = Amp - 0.1 * Amp;
-    // double thr = base->GetParameter(0) - 0.1 * Amp;
+    //double thr = Amp - 0.1 * Amp;
+    double thr = base->GetParameter(0) - 0.01 * base->GetParameter(0);
     int t1 = 0, t2 = 0;
 
     for (int k=0; k<RECORD_LENGTH-1; k++) {
       if (v[k] - dv > thr && v[k+1] + dv <= thr) {
-        if (t1==0) t1 = k+1; // perchè il controllo sullo 0?
+        if (t1==0) t1 = k+1;
         dE1 = dE1 + dv/TMath::Abs(v[k+1]-v[k]);
         //cout << k+1 << endl;
       }
