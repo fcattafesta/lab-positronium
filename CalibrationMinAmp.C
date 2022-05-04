@@ -55,7 +55,7 @@ void CalibrationMinAmp() {
 
   auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
-  auto calibr = new TF1("calibr", "[0]*x+[1]*x*x", 0, 2000);
+  auto calibr = new TF1("calibr", "pol1", 0, 2000);
 
   auto calFitRes = g->Fit(calibr, "SRNQ EX0");
 

@@ -5,9 +5,9 @@ void ComputeEnergy() {
 
   int low = 200, up = 800;
 
-  std::string treepaths[2] = {//"data/22Na.root",
-                              "data/60Co.root",
-                              "data/137Cs.root"
+  std::string treepaths[1] = {"data/22Na.root"
+                              //"data/60Co.root",
+                              //"data/137Cs.root"
                               //"data/241Am.root",
                               //"data/90Sr.root"
                             };
@@ -27,7 +27,7 @@ void ComputeEnergy() {
   }
 
 */
-  for (auto i=0; i<2; i++) {
+  for (auto i=0; i<1; i++) {
     cout << treepaths[i] << endl;
     //EnergyIntegral(treepaths[i], low, up);
     //cout << "Intergal finished" << endl;

@@ -62,32 +62,54 @@ double StatEnergyError(std::string treepath, std::string treename, std::string E
 }
 
 TH1D * CalibrateSpectrum(std::string treepath, std::string treename, std::string EnergyBranch,
-                         std::string "EnergyError", int nbins, double LowLim, double UpLim,
-                         double calConv, double calOffset) {
+                        int nbins, double LowLim, double UpLim, double cte, double slope){
 
   auto f = new TFile(treepath.c_str(), "READ");
   auto t = f->Get<TTree>(treename.c_str()); // Change tree cycle for different energy method calculation
 
   int nentries = t->GetEntries();
-  double data, Error_data, Energy, EnergyError;
+  double data, Energy;
 
   t->SetBranchAddress(EnergyBranch.c_str(), &Energy);
-  t->SetBranchAddress("EnergyError", &EnergyError);
 
 
-  auto h = new TH1D("h", "; Energy [a.u.]", nbins, LowLim, UpLim);
-  auto dh =  = new TH1D("h", "; dEnergy [a.u.]", nbins, LowLim, UpLim);
-  auto res[2] = [h, dh];
+  TH1D * h = new TH1D("h", "; Energy [a.u.]", nbins, LowLim, UpLim);
 
   for (int i=0; i<nentries; i++) {
     t->GetEntry(i);
-    data = (Energy - calOffset[0]) / calConv[0];
-    Error_data = ((EnergyError + calOffset[1])/(Energy - calOffset[0])) + (calConv[1]/calConv[0]);
-    if (Cut(data[i], UpLim, LowLim) == 1) {
-      h->Fill(data);
-      dh->Fill(Error_data);
+    data = (Energy - cte) / slope;
+    if (Cut(data, UpLim, LowLim) == 1) h->Fill(data);
   }
 
-  return res;
+  return h;
+
+}
+
+
+TH1D * CalibrationError(std::string treepath, std::string treename, std::string EnergyBranch,
+                        std::string EnergyErrorBranch, int nbins, double LowLim, double UpLim,
+                        double b, double db, double a, double da, double corr){
+
+  auto f = new TFile(treepath.c_str(), "READ");
+  auto t = f->Get<TTree>(treename.c_str()); // Change tree cycle for different energy method calculation
+
+  int nentries = t->GetEntries();
+  double data, Energy, Error_data, EnergyError;
+
+  t->SetBranchAddress(EnergyBranch.c_str(), &Energy);
+  t->SetBranchAddress(EnergyErrorBranch.c_str(), &EnergyError);
+
+  TH1D * dh = new TH1D("dh", "; dEnergy [a.u.]", nbins, LowLim, UpLim);
+
+  for (int i=0; i<nentries; i++) {
+    t->GetEntry(i);
+    data = (Energy - b) / a;
+    Error_data = TMath::Sqrt( pow((Energy-b)/(a*a), 2) + pow((db/a), 2) + 2*(Energy-b)*corr*da*db/(a*a) + pow((EnergyError/a), 2) );
+    if (Cut(data, UpLim, LowLim) == 1) {
+      dh->Fill(Error_data);
+    }
+  }
+
+  return dh;
 
 }

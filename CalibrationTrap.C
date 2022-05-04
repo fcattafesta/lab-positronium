@@ -56,7 +56,7 @@ void CalibrationTrap() {
 
   auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
-  auto calibr = new TF1("calibr", "[0]*x+ [1]*x*x", -1., 2000);
+  auto calibr = new TF1("calibr", "pol1", -1., 2000);
 
   auto calFitRes = g->Fit(calibr, "SRNQ EX0");
 
@@ -100,10 +100,13 @@ void CalibrationTrap() {
                                                      calFitRes->GetErrors()[0]);
   auto sSlope = Form("Slope: %.4f #pm %.4f [u.a./keV]", calFitRes->GetParams()[1],
                                              calFitRes->GetErrors()[1]);
+  auto sCorr = Form("Correlation: %.4f", calFitRes->Correlation(0,1));
+
   auto sChi = Form("#chi^{2}/ndof: %.2f/%.0u", calFitRes->Chi2(), calFitRes->Ndf());
   fitLegend->AddText("Fit results:");
   fitLegend->AddText(sIntercept);
   fitLegend->AddText(sSlope);
+  fitLegend->AddText(sCorr);
   fitLegend->AddText(sChi);
   fitLegend->Draw();
 
