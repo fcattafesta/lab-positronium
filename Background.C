@@ -3,21 +3,22 @@
 
 void Background() {
 
-  std::string treepath[2] = {"data/bkg.root", "data/bkg_noise.root"},
-              figpath[2] = {"figures/background/bkg.pdf",
+  std::string treepath[2] = {"data/background/bkg_0thr.root", "data/bkg_noise.root"},
+              figpath[2] = {"figures/background/bkg_0thr.pdf",
                             "figures/background/bkg_noise.pdf"},
-              branchname = "EnergyTrap2",
-              treename = "tree;3",
+              branchname = "EnergyTrap",
+              treename = "tree;2",
               elementname[2] = {"No sources", "Sources nearby"};
-  double LowLim[2] = {6e3, 6e3},
-         UpLim[2] = {70e3, 70e3},
+  double LowLim[2] = {-2e3, 6e3},
+         UpLim[2] = {2e3, 70e3},
          fitMin[2] = {62e3, 27e3},
          fitMax[2] = {67e3, 30e3};
   int nbins[3] = {200, 200};
   TFitResultPtr results;
   TH1D *histos[2];
 
-  /*for (int i=0; i<2; i++) {
+  /*
+  for (int i=0; i<1; i++) {
 
     TF1 *fitFunc = new TF1("fitFunc", "gaus", fitMin[i], fitMax[i]);
 
@@ -59,9 +60,10 @@ void Background() {
 
     DrawDate(c);
     MyStyle(histos[i], fitFunc);
-    //c->SaveAs(figpath[i].c_str());
+    c->SaveAs(figpath[i].c_str());
 
     c->Destructor(); fitFunc->Delete();
   }*/
-    DrawSignal(treepath[0], 10);
+
+  DrawSignal(treepath[0], 50);
 }

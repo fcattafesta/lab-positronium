@@ -172,9 +172,11 @@ void DrawCalFits(TH1D * h, std::string figpath, std::string elementname,
   auto res = new TGraph();
 
   for (int i=1; i<=nbins; i++) {
+    if (h->GetBinContent(i)!=0) {
     auto diff = (h->GetBinContent(i) - fitFunc->Eval(h->GetBinCenter(i))) /
                 h->GetBinError(i);
     res->AddPoint(h->GetBinCenter(i), diff);
+  }
   }
 
   res->Draw("AP");
@@ -196,6 +198,6 @@ void DrawCalFits(TH1D * h, std::string figpath, std::string elementname,
   resYaxis->SetTitleSize(.1); resYaxis->SetTitleOffset(.5);
   resYaxis->SetLabelSize(.08);
 
-  //c->SaveAs(figpath.c_str());
+  c->SaveAs(figpath.c_str());
   //c->Destructor();
 }

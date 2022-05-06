@@ -1,37 +1,27 @@
-#include "scripts/CalibrationFunctions.h"
+#include "../scripts/plot.h"
 
 void Calibration() {
 
-  //std::string figpath = "figures/fit/regression.pdf";
-  std::string treepath[3] = {"data/60Co.root", "data/60Co.root", "data/137Cs.root"},
-              branchname = "EnergyTrap", treename = "tree;2";
-
-  double fitMin[3] = {40e3, 53e3, 22e3}, fitMax[3] = {53e3, 67e3, 32e3};
-
-
-  TFitResultPtr results[3] = {Cobalt1(), Cobalt2(), Caesium()};
-
   double Ref[3] = {1173.23, 1332.50, 661.6};
   double errRef[3] = {0, 0, 0};
-  double errStat, errSyst;
-  double fitPeak[3], errPeak[3];
 
-  for (int i=0; i<3; i++) {
-    fitPeak[i] = results[i]->GetParams()[1];
-    errStat = results[i]->GetErrors()[1];
-    errSyst = StatEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
-    errPeak[i] = errStat + errSyst;
-    cout << errSyst <<endl;
-  }
+  double Peak[3] = {50309, 56950, 28857}, errPeak[3] = {21, 18, 3};
+  //double Peak[3] = {49735, 56310, 28476}, errPeak[3] = {17, 19, 3};
+  //double Peak[3] = {48435, 54841, 27719}, errPeak[3] = {17, 17, 3};
 
-  auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
+  std::string figpath[3] = {"figures/range/calibration/0_1029.pdf",
+                "figures/range/calibration/200_800.pdf",
+                "figures/range/calibration/300_700.pdf"},
+              elementname[3] = {"0-1029", "200-800", "300-700"};
+
+  auto g1 = new TGraphErrors(3, Ref, Peak, errRef, errPeak);
 
   auto calibr = new TF1("calibr", "pol1", -1., 2000);
   //calibr->FixParameter(0, 0.);
 
 
 
-  auto calFitRes = g->Fit(calibr, "SRN EX0");
+  auto calFitRes = g1->Fit(calibr, "SRN EX0");
 
   auto c = new TCanvas(); c->SetGrid();
 
@@ -47,21 +37,22 @@ void Calibration() {
 
   pad1->cd(); pad1->SetGrid();
 
-  g->Draw("AP SAME");
+  g1->Draw("AP SAME");
   calibr->Draw("AL SAME");
   calibr->SetLineColor(46);
-  g->SetTitle("");
-  g->SetMarkerStyle(8); g->SetMarkerSize(1.);
-  auto xaxis = g->GetXaxis(); xaxis->SetLimits(0., 1500.);
+  g1->SetTitle("");
+  g1->SetMarkerStyle(8); g1->SetMarkerSize(1.);
+  auto xaxis = g1->GetXaxis(); xaxis->SetLimits(0., 1500.);
   xaxis->SetTitle("Reference [keV]");
-  auto yaxis = g->GetYaxis(); yaxis->SetTitle("Fitted [u.a.]");
+  auto yaxis = g1->GetYaxis(); yaxis->SetTitle("Fitted [u.a.]");
   yaxis->SetTitleOffset(1.2); yaxis->SetTitleSize(.045);
   yaxis->SetLabelSize(.04);
   yaxis->SetRangeUser(calFitRes->GetParams()[0] - 10e3,
-                      TMath::MaxElement(3, fitPeak) + 5e3);
+                      TMath::MaxElement(3, Peak) + 5e3);
   c->Update();
   DrawDate(c);
-  auto fitLegend = new TPaveText(.15, .65, .75, .85);
+
+  auto fitLegend = new TPaveText(.15, .45, .75, .85);
   fitLegend->SetOption("NDC NB");
   fitLegend->SetFillStyle(0);
   fitLegend->SetBorderSize(0.);
@@ -75,6 +66,7 @@ void Calibration() {
                                              calFitRes->GetErrors()[1]);
   auto sCorr = Form("Correlation: %.4f", calFitRes->Correlation(0,1));
   auto sChi = Form("#chi^{2}/ndof: %.2f/%.0u", calFitRes->Chi2(), calFitRes->Ndf());
+  fitLegend->AddText(elementname[0].c_str());
   fitLegend->AddText("Fit results:");
   fitLegend->AddText(sIntercept);
   fitLegend->AddText(sSlope);
@@ -88,7 +80,7 @@ void Calibration() {
 
   for (int i=0; i<3; i++) {
 
-    auto diff = (fitPeak[i] - calibr->Eval(Ref[i])) / errPeak[i];
+    auto diff = (Peak[i] - calibr->Eval(Ref[i])) / errPeak[i];
     res->AddPoint(Ref[i], diff);
 
   }
@@ -112,6 +104,6 @@ void Calibration() {
   resYaxis->SetLabelSize(.08);
 
 
-  //c->SaveAs(figpath.c_str());
+  c->SaveAs(figpath[0].c_str());
 
 }

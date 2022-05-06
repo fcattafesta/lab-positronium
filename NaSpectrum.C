@@ -21,17 +21,17 @@ double f_Na(double *x, double *p) {
 
 void NaSpectrum() {
 
-  std::string treepath = "data/22Na.root",
-              figpath = "figures/22NaSpectrum/2804.pdf",
+  std::string treepath = "data/22Na/19mV.root",
+              figpath = "figures/22NaSpectrum/19mV_spectrum.pdf",
               treename = "tree;2",
               branchname = "EnergyTrap",
               elementname = "{}^{22}Na";
 
   double cte = 1031, d_cte=30, slope = 41.49, d_slope=0.03, corr = -0.952;
 
-  double LowLim = .1e3, UpLim = 1.6e3;
+  double LowLim = 200, UpLim = 1.6e3;
   double fitMin = .35e3, fitMax = .6e3;
-  int nbins = 100;
+  int nbins = 200;
 
   double error=0;
   int idx=0;
