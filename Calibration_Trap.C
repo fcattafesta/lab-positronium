@@ -1,61 +1,40 @@
-#include "scripts/spectrum.h"
-#include "scripts/plot.h"
+#include "scripts/CalFunc_Trap.h"
 
-void CalibrationMinAmp() {
 
-  std::string treepath[3] = {"data/60Co.root", "data/60Co.root",
-                              "data/137Cs.root"},
-              figpath[4] = {"figures/calibrationMinAmp/60Co2704_1.pdf",
-                            "figures/calibrationMinAmp/60Co2704_2.pdf",
-                            "figures/calibrationMinAmp/137Cs2704.pdf",
-                            "figures/calibrationMinAmp/regression.pdf"},
-              branchname = "EnergyMinAmp",
-              treename = "tree;3",
-              elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
-  double LowLim[3] = {0.1e3, 0.1e3, 0.1e3},
-         UpLim[3] = {1e3, 1e3, 0.45e3},
-         fitMin[3] = {0.6e3, .68e3, .32e3},
-         fitMax[3] = {0.68e3, .8e3, .42e3};
-  int nbins[4] = {200, 200, 200};
-  TFitResultPtr results[3];
-  TH1D *histos[3];
+void Calibration_Trap() {
 
-  for (int i=0; i<3; i++) {
 
-    TF1 *fitFunc = new TF1("fitFunc", "gaus", fitMin[i], fitMax[i]);
+  std::string figpath = "figures/calibrationTrap/regression.pdf",
+              branchname = "EnergyTrap", treename = "tree;2";
 
-    histos[i] = MakeSpectrum(treepath[i], treename, branchname, nbins[i], LowLim[i], UpLim[i]);
-    results[i] = histos[i]->Fit(fitFunc, "SRLNQ");
 
-    auto c = new TCanvas();
-    histos[i]->Draw();
-    fitFunc->Draw("AL SAME");
+  std::string treepath[3] = {"data/60Co.root", "data/60Co.root", "data/137Cs.root"};
 
-    auto legend = DrawLegend(c, .25, .65, .65, .85, histos[i],
-                             fitMin[i], fitMax[i], fitFunc);
-    legend->SetHeader(elementname[i].c_str(), "C");
-    DrawDate(c);
-    MyStyle(histos[i], fitFunc);
-    c->SaveAs(figpath[i].c_str());
 
-    c->Destructor(); fitFunc->Delete();
-  }
+  double fitMin[3] = {47e3, 53e3, 25e3}, fitMax[3] = {53e3, 60e3, 31.5e3};
 
-  double Ref[3] = {1173, 1333., 661.6};
-  double errRef[4] = {0, 0, 0};
+
+  TFitResultPtr results[3] = {Cobalt1(), Cobalt2(), Caesium()};
+
+  double Ref[3] = {1173.23, 1332.50, 661.6};
+  double errRef[3] = {0, 0, 0};
   double errStat, errSyst;
   double fitPeak[3], errPeak[3];
 
   for (int i=0; i<3; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
     errStat = results[i]->GetErrors()[1];
-    errSyst = StatEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
+    errSyst = SystEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
     errPeak[i] = errStat + errSyst;
+    cout << errSyst <<endl;
   }
 
   auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
-  auto calibr = new TF1("calibr", "pol1", 0, 2000);
+  auto calibr = new TF1("calibr", "pol1", -1., 2000);
+  //calibr->FixParameter(0, 0.);
+
+
 
   auto calFitRes = g->Fit(calibr, "SRNQ EX0");
 
@@ -83,8 +62,8 @@ void CalibrationMinAmp() {
   auto yaxis = g->GetYaxis(); yaxis->SetTitle("Fitted [u.a.]");
   yaxis->SetTitleOffset(1.2); yaxis->SetTitleSize(.045);
   yaxis->SetLabelSize(.04);
-  yaxis->SetRangeUser(calFitRes->GetParams()[0] - 2e3,
-                      TMath::MaxElement(3, fitPeak) + 2e3);
+  yaxis->SetRangeUser(calFitRes->GetParams()[0] - 10e3,
+                      TMath::MaxElement(3, fitPeak) + 5e3);
   c->Update();
   DrawDate(c);
   auto fitLegend = new TPaveText(.15, .65, .75, .85);
@@ -95,14 +74,16 @@ void CalibrationMinAmp() {
   fitLegend->SetTextSize(.05);
   fitLegend->SetTextAlign(11);
 
-  auto sIntercept = Form("Intercept: %.0f #pm %.0f [u.a.]", calFitRes->GetParams()[0],
+  auto sIntercept = Form("Intercept: %.4f #pm %.4f [u.a.]", calFitRes->GetParams()[0],
                                                      calFitRes->GetErrors()[0]);
-  auto sSlope = Form("Slope: %.2f #pm %.2f [u.a./keV]", calFitRes->GetParams()[1],
+  auto sSlope = Form("Slope: %.4f #pm %.4f [u.a./keV]", calFitRes->GetParams()[1],
                                              calFitRes->GetErrors()[1]);
+  auto sCorr = Form("Correlation: %.4f", calFitRes->Correlation(0,1));
   auto sChi = Form("#chi^{2}/ndof: %.2f/%.0u", calFitRes->Chi2(), calFitRes->Ndf());
   fitLegend->AddText("Fit results:");
   fitLegend->AddText(sIntercept);
   fitLegend->AddText(sSlope);
+  fitLegend->AddText(sCorr);
   fitLegend->AddText(sChi);
   fitLegend->Draw();
 
@@ -111,10 +92,8 @@ void CalibrationMinAmp() {
   auto res = new TGraph();
 
   for (int i=0; i<3; i++) {
-
     auto diff = (fitPeak[i] - calibr->Eval(Ref[i])) / errPeak[i];
     res->AddPoint(Ref[i], diff);
-
   }
 
   res->Draw("AP");
@@ -135,8 +114,7 @@ void CalibrationMinAmp() {
   resYaxis->SetTitleSize(.1); resYaxis->SetTitleOffset(.5);
   resYaxis->SetLabelSize(.08);
 
-  c->SaveAs(figpath[3].c_str());
 
-  c->SaveAs(figpath[3].c_str());
+  c->SaveAs(figpath.c_str());
 
 }

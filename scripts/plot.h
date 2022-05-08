@@ -140,8 +140,8 @@ TLegend * DrawLegendFit(TCanvas *c, double x1, double y1, double x2, double y2,
 }
 
 void DrawCalFits(TH1D * h, std::string figpath, std::string elementname,
-                TF1 *fitFunc, int nbins, double fitMin, double fitMax,
-                double LowLim, double UpLim, TFitResultPtr results) {
+                TF1 *fitFunc, int nbins, double LowLim, double UpLim,
+                TFitResultPtr results) {
 
   auto c = new TCanvas();
 
@@ -161,7 +161,7 @@ void DrawCalFits(TH1D * h, std::string figpath, std::string elementname,
   fitFunc->Draw("AL SAME");
 
   auto legend = DrawLegendFit(c, .1, .65, .35, .85, h,
-                           fitMin, fitMax, fitFunc, results);
+                           LowLim, UpLim, fitFunc, results);
   legend->SetHeader(elementname.c_str(), "C");
   DrawDate(c);
   MyStyle(h, fitFunc);

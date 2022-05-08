@@ -1,47 +1,22 @@
-#include "scripts/spectrum.h"
-#include "scripts/plot.h"
+#include "scripts/CalFunc_MinAmp.h"
 
-void CalibrationTrap() {
 
-  std::string treepath[3] = {"data/60Co.root", "data/60Co.root",
-                              "data/137Cs.root"},
-              figpath[4] = {"figures/calibrationTrap/60Co2704_1.pdf",
-                            "figures/calibrationTrap/60Co2704_2.pdf",
-                            "figures/calibrationTrap/137Cs2704.pdf",
-                            "figures/calibrationTrap/regression.pdf"},
-              branchname = "EnergyTrap",
-              treename = "tree;2",
-              elementname[3] = {"{}^{60}Co", "{}^{60}Co", "{}^{137}Cs"};
-  double LowLim[3] = {5e3, 5e3, 5e3},
-         UpLim[3] = {64e3, 64e3, 33e3},
-         fitMin[3] = {48e3, 54e3, 26.5e3},
-         fitMax[3] = {53e3, 60e3, 31e3};
-  int nbins[3] = {200, 200, 200};
-  TFitResultPtr results[3];
-  TH1D *histos[3];
+void Calibration_MinAmp() {
 
-  for (int i=0; i<3; i++) {
 
-    TF1 *fitFunc = new TF1("fitFunc", "gaus", fitMin[i], fitMax[i]);
+  std::string figpath = "figures/calibrationMinAmp/regression.pdf";
+              branchname = "EnergyMinAmp", treename = "tree;3";
 
-    histos[i] = MakeSpectrum(treepath[i], treename, branchname, nbins[i], LowLim[i], UpLim[i]);
-    results[i] = histos[i]->Fit(fitFunc, "SRLNQ");
 
-    auto c = new TCanvas();
-    histos[i]->Draw();
-    fitFunc->Draw("AL SAME");
+  std::string treepath[3] = {"data/60Co.root", "data/60Co.root", "data/137Cs.root"};
 
-    auto legend = DrawLegend(c, .25, .65, .65, .85, histos[i],
-                             fitMin[i], fitMax[i], fitFunc);
-    legend->SetHeader(elementname[i].c_str(), "C");
-    DrawDate(c);
-    MyStyle(histos[i], fitFunc);
-    c->SaveAs(figpath[i].c_str());
 
-    c->Destructor(); fitFunc->Delete();
-  }
+  double fitMin[3] = {500, 680, 280}, fitMax[3] = {680, 1000, 420};
 
-  double Ref[3] = {1173, 1333., 661.6};
+
+  TFitResultPtr results[3] = {Cobalt1(), Cobalt2(), Caesium()};
+
+  double Ref[3] = {1173.23, 1332.50, 661.6};
   double errRef[3] = {0, 0, 0};
   double errStat, errSyst;
   double fitPeak[3], errPeak[3];
@@ -49,7 +24,7 @@ void CalibrationTrap() {
   for (int i=0; i<3; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
     errStat = results[i]->GetErrors()[1];
-    errSyst = StatEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
+    errSyst = SystEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
     errPeak[i] = errStat + errSyst;
     cout << errSyst <<endl;
   }
@@ -57,6 +32,9 @@ void CalibrationTrap() {
   auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
 
   auto calibr = new TF1("calibr", "pol1", -1., 2000);
+  //calibr->FixParameter(0, 0.);
+
+
 
   auto calFitRes = g->Fit(calibr, "SRNQ EX0");
 
@@ -101,7 +79,6 @@ void CalibrationTrap() {
   auto sSlope = Form("Slope: %.4f #pm %.4f [u.a./keV]", calFitRes->GetParams()[1],
                                              calFitRes->GetErrors()[1]);
   auto sCorr = Form("Correlation: %.4f", calFitRes->Correlation(0,1));
-
   auto sChi = Form("#chi^{2}/ndof: %.2f/%.0u", calFitRes->Chi2(), calFitRes->Ndf());
   fitLegend->AddText("Fit results:");
   fitLegend->AddText(sIntercept);
@@ -115,10 +92,8 @@ void CalibrationTrap() {
   auto res = new TGraph();
 
   for (int i=0; i<3; i++) {
-
     auto diff = (fitPeak[i] - calibr->Eval(Ref[i])) / errPeak[i];
     res->AddPoint(Ref[i], diff);
-
   }
 
   res->Draw("AP");
@@ -139,6 +114,7 @@ void CalibrationTrap() {
   resYaxis->SetTitleSize(.1); resYaxis->SetTitleOffset(.5);
   resYaxis->SetLabelSize(.08);
 
-  c->SaveAs(figpath[3].c_str());
+
+  c->SaveAs(figpath.c_str());
 
 }
