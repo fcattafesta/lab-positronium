@@ -3,12 +3,15 @@
 void ComputeEnergy() {
 
 
-  int low[3] = {0, 200, 300},
-      up[3] = {1029, 800, 700} ;
 
-  std::string treepaths[3] = {"data/22Na.root",
-                              "data/60Co.root",
-                              "data/137Cs.root",
+  int low[2] = {300, 350},
+      up[2] = {800, 750};
+
+
+
+  std::string treepaths[3] = {"data/range/22Na_2804.root",
+                              "data/range/60Co.root",
+                              "data/range/137Cs.root",
                               //"data/241Am.root",
                               //"data/90Sr.root"
                             };
@@ -36,26 +39,31 @@ void ComputeEnergy() {
   }
 
 */
-/*
-  for (int i=0; i<2; i++) {
-    EnergyTrap(natree[i], low[1], up[1]);
-  }*/
 
-  /*
-  for (auto i=0; i<3; i++) {
+/*
+  for (int i=0; i<1; i++) {
+    for (int j=; j<4; j++) EnergyTrap(treepaths[i], low[j], up[j]);
+  }
+
+*/
+  //int low = 200, up= 1029;
+
+  int j=1;
+
+  for (auto i=0; i<1; i++) {
     cout << treepaths[i] << endl;
     //EnergyIntegral(treepaths[i], low, up);
     //cout << "Intergal finished" << endl;
-    EnergyTrap(treepaths[i], low, up);
+    EnergyTrap(treepaths[i], low[j], up[j]);
     cout << "Trap finished" << endl;
-    EnergyMinAmp(treepaths[i]);
-    cout << "MinAmp finished" << endl;
-    //EnergyThr(treepaths[i]);
+    //EnergyMinAmp(treepaths[i]);
+    //cout << "MinAmp finished" << endl;
+    //EnergyThr(treepaths[i], 0.005);
     //cout << "Thr finished" << endl;
   }
-  */
 
 
+  /*
   for (auto i=2; i<3; i++) {
     cout << bkgtree[i] << endl;
     //EnergyIntegral(bkgtree[i], low, up);
@@ -65,6 +73,8 @@ void ComputeEnergy() {
     EnergyMinAmp(bkgtree[i]);
     cout << "MinAmp finished" << endl;
   }
+  */
+
 
   //EnergyMinAmp(treeam);
 

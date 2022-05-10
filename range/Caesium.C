@@ -21,13 +21,13 @@ double func(double *x, double *p) {
 
 void Caesium() {
 
-  std::string treepath = "data/range/137Cs.root",
+  std::string treepath = "../data/range/137Cs.root",
               branchname = "EnergyTrap",
               treename[3] = {"tree;2", "tree;3", "tree;4"},
-              figpath[3] = {"figures/range/caesium/0_1029.pdf",
-                            "figures/range/caesium/200_800.pdf",
-                            "figures/range/caesium/300_700.pdf"},
-              elementname[3] = {"0-1029", "200-800", "300-700"};
+              figpath[3] = {"../figures/range/caesium/300_850.pdf",
+                            "../figures/range/caesium/300_750.pdf",
+                            "../figures/range/caesium/400_700.pdf",},
+              elementname[3] = {"300-850", "300-750", "400-700"};
 
   double LowLim = 22e3, UpLim = 32e3;
   double fitMin = 22e3, fitMax = 32e3;
@@ -81,9 +81,11 @@ void Caesium() {
     auto res = new TGraph();
 
     for (int j=1; j<=nbins; j++) {
-      auto diff = (h->GetBinContent(j) - fitFunc->Eval(h->GetBinCenter(j))) /
-                  h->GetBinError(j);
-      res->AddPoint(h->GetBinCenter(j), diff);
+      double err = h->GetBinError(j);
+      if (err!=0) {
+        auto diff = ( h->GetBinContent(j) - fitFunc->Eval(h->GetBinCenter(j)) )/err;
+        res->AddPoint(h->GetBinCenter(j), diff);
+      }
     }
 
     res->Draw("AP");

@@ -21,13 +21,13 @@ double func(double *x, double *p) {
 
 void Cobalt2() {
 
-  std::string treepath = "data/range/60Co.root",
+  std::string treepath = "../data/range/60Co.root",
               branchname = "EnergyTrap",
               treename[3] = {"tree;2", "tree;3", "tree;4"},
-              figpath[3] = {"figures/range/cobalt2/0_1029.pdf",
-                            "figures/range/cobalt2/200_800.pdf",
-                            "figures/range/cobalt2/300_700.pdf"},
-              elementname[3] = {"0-1029", "200-800", "300-700"};
+              figpath[3] = {"../figures/range/cobalt2/300_850.pdf",
+                            "../figures/range/cobalt2/300_750.pdf",
+                            "../figures/range/cobalt2/400_700.pdf",},
+              elementname[3] = {"300-850", "300-750", "400-700"};
 
   double LowLim = 53e3, UpLim = 67e3;
   double fitMin = 53e3, fitMax = 67e3;
@@ -86,10 +86,10 @@ void Cobalt2() {
 
     for (int j=1; j<=nbins; j++) {
       if (h->GetBinError(j)!=0) {
-      auto diff = (h->GetBinContent(j) - fitFunc->Eval(h->GetBinCenter(j))) /
-                  h->GetBinError(j);
-      res->AddPoint(h->GetBinCenter(j), diff);
-    }
+        auto diff = (h->GetBinContent(j) - fitFunc->Eval(h->GetBinCenter(j))) /
+                    h->GetBinError(j);
+        res->AddPoint(h->GetBinCenter(j), diff);
+      }
     }
 
     res->Draw("AP");

@@ -1,6 +1,6 @@
 #include "dataset.h"
 
-void DrawSignal(std::string treepath, int event) {
+TGraph * DrawSignal(std::string treepath, int event) {
 
   auto f = new TFile(treepath.c_str(), "READ");
   auto t = f->Get<TTree>("tree;1"); //tree does not exist after an update (e.g. tree;1)
@@ -26,8 +26,10 @@ void DrawSignal(std::string treepath, int event) {
     auto yaxis = g->GetYaxis();
     yaxis->SetTitle("Amplitude [a.u.]");
     yaxis->SetTitleOffset(1.4);
+    return g;
     }
   }
+  return NULL;
 }
 
 void MyStyle(TH1D * h, TF1 * f) {

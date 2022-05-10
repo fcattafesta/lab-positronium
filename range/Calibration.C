@@ -5,14 +5,25 @@ void Calibration() {
   double Ref[3] = {1173.23, 1332.50, 661.6};
   double errRef[3] = {0, 0, 0};
 
-  double Peak[3] = {50309, 56950, 28857}, errPeak[3] = {21, 18, 3};
-  //double Peak[3] = {49735, 56310, 28476}, errPeak[3] = {17, 19, 3};
-  //double Peak[3] = {48435, 54841, 27719}, errPeak[3] = {17, 17, 3};
+  //double Peak[3] = {50309, 56950, 28857},   errStat[3] = {21, 18, 3}, errPeak[3];
+  //double Peak[3] = {49735, 56310, 28476}, errStat[3] = {17, 19, 3}, errPeak[3];
+  //double Peak[3] = {48435, 54841, 27719}, errStat[3] = {17, 17, 3}, errPeak[3];
 
-  std::string figpath[3] = {"figures/range/calibration/0_1029.pdf",
-                "figures/range/calibration/200_800.pdf",
-                "figures/range/calibration/300_700.pdf"},
-              elementname[3] = {"0-1029", "200-800", "300-700"};
+  //double Peak[3] = { 49708, 56282, 28453},   errStat[3] = {18, 18, 3}, errPeak[3];
+  //double Peak[3] = {49250, 55757, 28180},   errStat[3] = {18, 18, 3}, errPeak[3];
+  double Peak[3] = {48415, 54814, 27694},   errStat[3] = {18, 18, 3}, errPeak[3];
+
+
+
+
+  double errSyst = 70;
+  for (int i=0; i<3; i++) errPeak[i] = errStat[i] + errSyst;
+
+
+  std::string figpath[3] = {"../figures/range/calibration/300_850.pdf",
+                "../figures/range/calibration/300_750.pdf",
+                "../figures/range/calibration/400_700.pdf"},
+              elementname[3] = {"300-850", "300-750", "400-700"};
 
   auto g1 = new TGraphErrors(3, Ref, Peak, errRef, errPeak);
 
@@ -104,6 +115,6 @@ void Calibration() {
   resYaxis->SetLabelSize(.08);
 
 
-  c->SaveAs(figpath[0].c_str());
+  c->SaveAs(figpath[2].c_str());
 
 }
