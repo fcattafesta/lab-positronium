@@ -4,24 +4,25 @@
 void Calibration_Trap() {
 
 
-  std::string figpath = "figures/calibrationTrap/regression.pdf",
+  std::string figpath = "figures/calibrationTrap/regression_pol2_nooffset.pdf",
               branchname = "EnergyTrap", treename = "tree;2";
 
 
-  std::string treepath[3] = {"data/60Co.root", "data/60Co.root", "data/137Cs.root"};
+  std::string treepath[4] = {"data/60Co.root", "data/60Co.root", "data/137Cs.root",
+                             "data/22Na.root"};
 
 
-  double fitMin[3] = {47e3, 53e3, 25e3}, fitMax[3] = {53e3, 60e3, 31.5e3};
+  double fitMin[4] = {47e3, 53e3, 25e3, 45e3}, fitMax[4] = {53e3, 60e3, 31.5e3, 62e3};
 
 
-  TFitResultPtr results[3] = {Cobalt1(), Cobalt2(), Caesium()};
+  TFitResultPtr results[4] = {Cobalt1(), Cobalt2(), Caesium(), Sodium()};
 
-  double Ref[3] = {1173.23, 1332.50, 661.6};
-  double errRef[3] = {0, 0, 0};
+  double Ref[4] = {1173.23, 1332.50, 661.6, 1274.53};
+  double errRef[4] = {0, 0, 0, 0};
   double errStat, errSyst;
-  double fitPeak[3], errPeak[3];
+  double fitPeak[4], errPeak[4];
 
-  for (int i=0; i<3; i++) {
+  for (int i=0; i<4; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
     errStat = results[i]->GetErrors()[1];
     errSyst = SystEnergyError(treepath[i], treename, branchname, "EnergyError", fitMin[i], fitMax[i]);
@@ -29,14 +30,14 @@ void Calibration_Trap() {
     cout << errSyst <<endl;
   }
 
-  auto g = new TGraphErrors(3, Ref, fitPeak, errRef, errPeak);
+  auto g = new TGraphErrors(4, Ref, fitPeak, errRef, errPeak);
 
-  auto calibr = new TF1("calibr", "pol1", -1., 2000);
-  //calibr->FixParameter(0, 0.);
+  auto calibr = new TF1("calibr", "pol2", -1., 2000);
+  calibr->FixParameter(0, 0.);
 
 
 
-  auto calFitRes = g->Fit(calibr, "SRNQ EX0");
+  auto calFitRes = g->Fit(calibr, "SRN EX0");
 
   auto c = new TCanvas(); c->SetGrid();
 
@@ -91,7 +92,7 @@ void Calibration_Trap() {
 
   auto res = new TGraph();
 
-  for (int i=0; i<3; i++) {
+  for (int i=0; i<4; i++) {
     auto diff = (fitPeak[i] - calibr->Eval(Ref[i])) / errPeak[i];
     res->AddPoint(Ref[i], diff);
   }

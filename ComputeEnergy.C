@@ -9,9 +9,9 @@ void ComputeEnergy() {
 
 
 
-  std::string treepaths[3] = {"data/range/22Na_2804.root",
-                              "data/range/60Co.root",
-                              "data/range/137Cs.root",
+  std::string treepaths[3] = {"data/22Na.root",
+                              "data/60Co.root",
+                              "data/137Cs.root",
                               //"data/241Am.root",
                               //"data/90Sr.root"
                             };
@@ -50,11 +50,11 @@ void ComputeEnergy() {
 
   int j=1;
 
-  for (auto i=0; i<1; i++) {
+  for (auto i=0; i<3; i++) {
     cout << treepaths[i] << endl;
     //EnergyIntegral(treepaths[i], low, up);
     //cout << "Intergal finished" << endl;
-    EnergyTrap(treepaths[i], low[j], up[j]);
+    EnergyTrap(treepaths[i], 300, 1029);
     cout << "Trap finished" << endl;
     //EnergyMinAmp(treepaths[i]);
     //cout << "MinAmp finished" << endl;
