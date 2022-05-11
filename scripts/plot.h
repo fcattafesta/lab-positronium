@@ -167,7 +167,7 @@ void DrawCalFits(TH1D * h, std::string figpath, std::string elementname,
   legend->SetHeader(elementname.c_str(), "C");
   DrawDate(c);
   MyStyle(h, fitFunc);
-  auto xaxis = h->GetXaxis(); xaxis->SetTitle("Energy [keV]");
+  auto xaxis = h->GetXaxis(); xaxis->SetTitle("Energy [u.a.]");
   xaxis->SetLimits(LowLim, UpLim);
   pad2->cd(); pad2->SetGrid();
 
@@ -201,5 +201,5 @@ void DrawCalFits(TH1D * h, std::string figpath, std::string elementname,
   resYaxis->SetLabelSize(.08);
 
   c->SaveAs(figpath.c_str());
-  //c->Destructor();
+  c->Destructor();
 }

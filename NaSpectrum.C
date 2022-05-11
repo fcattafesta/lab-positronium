@@ -1,5 +1,18 @@
-#include "scripts/spectrum.h"
-#include "scripts/plot.h"
+#include "scripts/calibration.h"
+
+std::string figpath[npeak] = {"figures/calibrationTrap/60Co1.pdf",
+                              "figures/calibrationTrap/60Co2.pdf",
+                              "figures/calibrationTrap/137Cs.pdf",
+                              "figures/calibrationTrap/22Na.pdf"},
+
+             treepath[npeak] = {"data/60Co.root", "data/60Co.root",
+                               "data/137Cs.root", "data/22Na.root"},
+
+             elementname[npeak] = {"{}^{60}Co", "{}^{60}Co",
+                                   "{}^{137}Cs", "{}^{22}Na"},
+
+             figregrpath = "figures/calibrationTrap/regression.pdf";
+
 
 Bool_t reject = kTRUE;
 
