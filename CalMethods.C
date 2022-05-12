@@ -17,7 +17,12 @@ void CalMethods() {
                                  "figures/calibrationTrap/pol2.pdf",
                                  "figures/calibrationTrap/pol1_fix.pdf",
                                  "figures/calibrationTrap/pol2_fix.pdf"};
-
+/*
+               figregrpath[4] = {"figures/calibrationTrap/non_norm/pol1.pdf",
+                                 "figures/calibrationTrap/non_norm/pol2.pdf",
+                                 "figures/calibrationTrap/non_norm/pol1_fix.pdf",
+                                 "figures/calibrationTrap/non_norm/pol2_fix.pdf"};
+*/
   TFitResultPtr results[4];
 
   TF1 * f_cal[4];

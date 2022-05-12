@@ -25,7 +25,7 @@ TFitResultPtr Calibration(std::string treepath[npeak], std::string figpath[npeak
 
   double ref[npeak] = {1173.23, 1332.50, 661.6, 1274.53},
          errRef[npeak] = {0, 0, 0, 0};
-  double fitPeak[npeak], errPeak[npeak];
+  double fitPeak[npeak], errPeak[npeak], newErr[npeak];
 
   for (int i=0; i<npeak; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
@@ -33,6 +33,15 @@ TFitResultPtr Calibration(std::string treepath[npeak], std::string figpath[npeak
    }
 
   auto g = new TGraphErrors(npeak, ref, fitPeak, errRef, errPeak);
+
+  auto res1 = g->Fit(calibr, "SRN EX0");
+
+  auto chinorm = res1->Chi2() / res1->Ndf();
+
+  for (int i=0; i<npeak; i++) {
+    newErr[i] = errPeak[i] * sqrt(chinorm);
+    g->SetPointError(i, errRef[i], newErr[i]);
+  }
 
   auto calFitRes = g->Fit(calibr, "SRN EX0");
 
@@ -64,7 +73,7 @@ TFitResultPtr Calibration(std::string treepath[npeak], std::string figpath[npeak
                       TMath::MaxElement(npeak, fitPeak) + 5e3);
   c->Update();
   DrawDate(c);
-  auto fitLegend = new TPaveText(.15, .65, .75, .85);
+  auto fitLegend = new TPaveText(.15, .55, .75, .85);
   fitLegend->SetOption("NDC NB");
   fitLegend->SetFillStyle(0);
   fitLegend->SetBorderSize(0.);
@@ -93,7 +102,7 @@ TFitResultPtr Calibration(std::string treepath[npeak], std::string figpath[npeak
   auto res = new TGraph();
 
   for (int i=0; i<npeak; i++) {
-    auto diff = (fitPeak[i] - calibr->Eval(ref[i])) / errPeak[i];
+    auto diff = (fitPeak[i] - calibr->Eval(ref[i])) / newErr[i];
     res->AddPoint(ref[i], diff);
   }
 

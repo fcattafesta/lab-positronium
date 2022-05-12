@@ -1,16 +1,35 @@
-#include ""
+#include "scripts/calibration.h"
 
 void CalTime() {
 
-  std::string figpath = "";
-  const int npoints = 2;
+  std::string figpath[2][npeak] = {{"figures/time/1005/60Co1.pdf",
+                                 "figures/time/1005/60Co2.pdf",
+                                 "figures/time/1005/137Cs.pdf",
+                                 "figures/time/1005/22Na.pdf"},
+                                {"figures/time/1105/60Co1.pdf",
+                                 "figures/time/1105/60Co2.pdf",
+                                 "figures/time/1105/137Cs.pdf",
+                                 "figures/time/1105/22Na.pdf"}},
 
-  TFitResultPtr results[npoints];
+               treepath[2][npeak] = {{"data/1005/60Co.root", "data/1005/60Co.root",
+                                     "data/1005/137Cs.root", "data/1005/22Na.root"},
+                                    {"data/1105/60Co.root", "data/1105/60Co.root",
+                                     "data/1105/137Cs.root", "data/1105/22Na.root"}},
 
-  for (int i=0; i<npoints; i++) {
-    results[i] = Calibration();
+               elementname[npeak] = {"{}^{60}Co", "{}^{60}Co",
+                                     "{}^{137}Cs", "{}^{22}Na"},
+
+               figregrpath[2] = {"figures/time/1005.pdf",
+                                 "figures/time/1105.pdf"};
+
+  TFitResultPtr results[2];
+
+  auto f_cal = new TF1("f_cal2", "[0]*x", -1, 2000);
+
+  for (int i=0; i<2; i++) {
+
+    results[i] = Calibration(treepath[i], figpath[i], elementname, figregrpath[i],
+                          f_cal);
   }
-
-
 
 }
