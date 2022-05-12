@@ -19,12 +19,12 @@ void CalTime() {
                elementname[npeak] = {"{}^{60}Co", "{}^{60}Co",
                                      "{}^{137}Cs", "{}^{22}Na"},
 
-               figregrpath[2] = {"figures/time/1005.pdf",
-                                 "figures/time/1105.pdf"};
+               figregrpath[2] = {"figures/time/1005_pol1fix.pdf",
+                                 "figures/time/1105_pol1fix.pdf"};
 
   TFitResultPtr results[2];
 
-  auto f_cal = new TF1("f_cal2", "[0]*x", -1, 2000);
+  auto f_cal = new TF1("f_cal", "[0]*x", -1, 2000);
 
   for (int i=0; i<2; i++) {
 

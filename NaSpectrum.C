@@ -4,8 +4,8 @@ Bool_t reject0 = kTRUE;
 
 void NaSpectrum() {
 
-  std::string treepath = "data/1105/coinc1.root",
-              figpath = "figures/time/1105_coinc1.pdf",
+  std::string treepath = "data/1005/coinc_1.root",
+              figpath = "figures/time/1005_coinc1_pol2fix.pdf",
               treename = "tree;2",
               branchname = "EnergyTrap",
               elementname = "{}^{22}Na";
@@ -13,7 +13,8 @@ void NaSpectrum() {
 
   double LowLim = 0.4e3, UpLim = 0.7e3;
   double peakMin = 0.48e3, peakMax = 0.6e3;
-  double cte = 0, slope = 42.63;
+  double cte = 0, slope = 40.96;
+  double a = -0.0007, b= 43.34;
   int nbins = 200;
 
   auto f_bkg = [=](double *x, double *p) {
@@ -28,8 +29,12 @@ void NaSpectrum() {
        return signal(x, p) + f_bkg(x, &p[3]);
     };
 
+  /*
   auto h = CalibrateSpectrum(treepath, treename, branchname,
-                              nbins, LowLim, UpLim, cte, slope);
+                              nbins, LowLim, UpLim, cte, slope);  */
+
+  auto h = CalibrateSpectrum_var(treepath, treename, branchname,
+                                  nbins, LowLim, UpLim, a, b);
 
   TF1 *bkg = new TF1("bkg", f_bkg, LowLim, UpLim, 3);
   bkg->SetParameters(.3e3, -0.03, .003);
