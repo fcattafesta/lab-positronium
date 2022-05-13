@@ -2,12 +2,12 @@
 
 void ComputeEnergy() {
 
-  std::string treepaths[3] = {"data/1105/22Na.root",
-                              "data/1105/60Co.root",
-                              "data/1105/137Cs.root"};
+  std::string treepaths[3] = {"data/1205/22Na.root",
+                              "data/1205/60Co.root",
+                              "data/1205/137Cs.root"};
 
-  std::string coinctree[2] = {"data/1105/coinc1.root",
-                              "data/1105/coinc2.root"};
+  std::string coinctree[2] = {"data/1205/coinc_1.root",
+                              "data/1205/coinc_2.root"};
 
   for (auto i=3; i<3; i++) {
     cout << treepaths[i] << endl;

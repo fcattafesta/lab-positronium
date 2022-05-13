@@ -25,7 +25,7 @@ TFitResultPtr Calibration(std::string treepath[npeak], std::string figpath[npeak
 
   double ref[npeak] = {1173.23, 1332.50, 661.6, 1274.53},
          errRef[npeak] = {0, 0, 0, 0};
-  double fitPeak[npeak], errPeak[npeak], newErr[npeak];
+  double fitPeak[npeak], newErr[npeak], errPeak[npeak];
 
   for (int i=0; i<npeak; i++) {
     fitPeak[i] = results[i]->GetParams()[1];
