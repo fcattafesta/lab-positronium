@@ -1,11 +1,11 @@
 #include "fitpeaks.h"
 
-const int npeak = 4;
+const int npeak = 2;
 
 TFitResultPtr Calibration_2(std::string treepath[npeak], std::string figpath[npeak],
                           std::string elementname[npeak], std::string figregrpath,
                           TF1 * calibr) {
-
+/*
   double histMin[npeak] = {180e3, 263.5e3, 100e3, 230e3},
          histMax[npeak] = {260e3, 302e3, 160e3, 300e3},
          peakMin[npeak] = {232e3, 263e3, 124e3, 254e3},
@@ -14,17 +14,27 @@ TFitResultPtr Calibration_2(std::string treepath[npeak], std::string figpath[npe
                               {4.1e2, -4.8e-3, 1.4e-8}, {2.3e1, 1.7e-3, 1.4e-8}},
          initPeak[npeak][3] = {{.16e3, 247e3, 5e3}, {.14e3, 277e3, 5e3},
                                {1e3, 135e3, 1e3}, {.4e3, 268e3, .8e3}};
+*/
 
+
+  double histMin[npeak] = {122e3, 230e3},
+  histMax[npeak] = {170e3, 300e3},
+  peakMin[npeak] = {134e3, 254e3},
+  peakMax[npeak] = {154e3, 282e3},
+  initBkg[npeak][3] = {{4.1e2, -4.8e-3, 1.4e-8}, {2.3e1, 1.7e-3, 1.4e-8}},
+  initPeak[npeak][3] = {{.1e3, 140e3, 1e3}, {.4e3, 268e3, .8e3}};
+  int nbins = 50;
 
   TFitResultPtr results[npeak];
 
   for (int i=0; i<npeak; i++) {
     results[i] = FitPeak(treepath[i], figpath[i], elementname[i], histMin[i], histMax[i],
-                         peakMin[i], peakMax[i], initBkg[i], initPeak[i]);
+                         peakMin[i], peakMax[i], initBkg[i], initPeak[i], nbins);
   }
 
-  double ref[npeak] = {1173.23, 1332.50, 661.6, 1274.53},
-         errRef[npeak] = {0, 0, 0, 0};
+  //double ref[npeak] = {1173.23, 1332.50, 661.6, 1274.53},
+  double ref[npeak] = {661.6, 1274.53},
+         errRef[npeak] = {0, 0};
   double fitPeak[npeak], newErr[npeak], errPeak[npeak];
 
   for (int i=0; i<npeak; i++) {

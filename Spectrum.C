@@ -2,9 +2,10 @@
 #include "scripts/spectrum.h"
 
 void Spectrum() {
-  std::string treepath = "data/calibration_2/1205/22Na.root", treename = "tree;2", EnergyBranch = "EnergyTrap";
-  int nbins = 200;
-  double LowLim=50e3, UpLim=1000e3;
+  std::string treepath = "data/1805/triple_3.root",
+              treename = "tree;2", EnergyBranch = "EnergyTrap";
+  int nbins = 20;
+  double LowLim = 0e3, UpLim = 80e3;
 
   auto h = MakeSpectrum(treepath, treename, EnergyBranch, nbins, LowLim, UpLim);
 

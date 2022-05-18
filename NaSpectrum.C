@@ -1,11 +1,11 @@
-#include "scripts/Calibration.h"
+#include "scripts/Calibration_1.h"
 
 Bool_t reject0 = kTRUE;
 
-void NaSpectrum(int pol=1) {
+void NaSpectrum(int pol=2) {
 
-  std::string treepath = "data/PMT1/1205/coinc_1.root",
-              figpath = Form("figures/time/1205_coinc1_pol%dfix.pdf", pol),
+  std::string treepath = "data/1005/coinc_1.root",
+              figpath = Form("figures/time_1/check/1005_coinc1_pol%dfix_after.pdf", pol),
               treename = "tree;2",
               branchname = "EnergyTrap",
               elementname = "{}^{22}Na";
@@ -14,7 +14,7 @@ void NaSpectrum(int pol=1) {
   double LowLim = 0.4e3, UpLim = 0.7e3;
   double peakMin = 0.48e3, peakMax = 0.6e3;
 
-  double slope = 42.41, d_slope = 0.10;
+  double slope = 42.77, d_slope = 0.22;
   double cte = 0,  d_cte=0;
 
   double a = -0.0005, da = 0.0002;

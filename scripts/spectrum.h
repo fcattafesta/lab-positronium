@@ -126,7 +126,7 @@ double CalibrationError(double Energy, int pol, double a, double da, double b=0,
     part_b = -1/a;
   }
   if (pol==2) {
-    part_a = (0.5*b/(a*a)) + 0.5*(-(b*b/(2*a*a*a)) - (Energy*Energy/a) + (b*Energy/(a*a)) )/(Energy+0.5*(b/a));
+    part_a = (0.5*b/(a*a)) - 0.5*(+(b*b/(2*a*a*a)) + (Energy*Energy/a) + (b*Energy/(a*a)) )/(Energy+0.5*(b/a));
     part_b = Energy/(b+2*a*Energy);
   }
 
