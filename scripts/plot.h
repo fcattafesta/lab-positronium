@@ -200,6 +200,6 @@ void DrawCalFits(TH1D * h, std::string figpath, std::string elementname,
   resYaxis->SetTitleSize(.1); resYaxis->SetTitleOffset(.5);
   resYaxis->SetLabelSize(.08);
 
-  //c->SaveAs(figpath.c_str());
+  c->SaveAs(figpath.c_str());
   c->Destructor();
 }

@@ -65,23 +65,30 @@ TH1D * CalSpectrum(std::string treepath, std::string treename, std::string Energ
 }
 
 
-TH1D * CalSpectrum_sum(std::string treepath1, std::string treepath2, std::string treename, std::string EnergyBranch,
-                        int pol, int nbins, double LowLim, double UpLim, double a1, double b1, double a2, double b2){
+TH1D * CalSpectrum_sum(std::string treepath1, std::string treepath2,
+                       std::string treepath3, int pol, int nbins, double LowLim,
+                       double UpLim, double a1, double b1, double a2, double b2,
+                       double a3, double b3) {
+
+  std::string treename = "tree;2", EnergyBranch = "EnergyTrap";
 
   auto f1 = new TFile(treepath1.c_str(), "READ");
   auto t1 = f1->Get<TTree>(treename.c_str()); // Change tree cycle for different energy method calculation
 
-  auto f2 = new TFile(treepath1.c_str(), "READ");
+  auto f2 = new TFile(treepath2.c_str(), "READ");
   auto t2 = f2->Get<TTree>(treename.c_str());
 
+  auto f3 = new TFile(treepath3.c_str(), "READ");
+  auto t3 = f3->Get<TTree>(treename.c_str());
+
   int nentries = t1->GetEntries();
-  double data1, data2, Energy1, Energy2;
+  double data1, data2, data3, Energy1, Energy2, Energy3;
 
   t1->SetBranchAddress(EnergyBranch.c_str(), &Energy1);
   t2->SetBranchAddress(EnergyBranch.c_str(), &Energy2);
+  t3->SetBranchAddress(EnergyBranch.c_str(), &Energy3);
 
-
-  TH1D * h = new TH1D("h", "; Energy [a.u.]", nbins, LowLim, UpLim);
+  TH1D * h = new TH1D("h", "; Energy [keV]", nbins, LowLim, UpLim);
 
   if (pol==1) {
     for (int i=0; i<nentries; i++) {
@@ -89,7 +96,8 @@ TH1D * CalSpectrum_sum(std::string treepath1, std::string treepath2, std::string
       t2->GetEntry(i);
       data1 = (Energy1 - b1) / a1;
       data2 = (Energy2 - b2) / a2;
-      if (Cut(data1+data2, UpLim, LowLim) == 1) h->Fill(data1+data2);
+      data3 = (Energy3 - b3) / a3;
+      if (Cut(data1+data2+data3, UpLim, LowLim) == 1) h->Fill(data1+data2+data3);
     }
   }
   if (pol==2) {
