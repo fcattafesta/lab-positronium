@@ -1,6 +1,6 @@
-#include "scripts/calibration_3.h"
+#include "scripts/Calibration_check.h"
 
-void CalTime_3() {
+void CalTime_check() {
 
   std::string figpath[2][npeak] = {{"figures/time/1005/60Co1.pdf",
                                  "figures/time/1005/60Co2.pdf",

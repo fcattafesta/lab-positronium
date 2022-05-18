@@ -6,14 +6,14 @@ TFitResultPtr Calibration_2(std::string treepath[npeak], std::string figpath[npe
                           std::string elementname[npeak], std::string figregrpath,
                           TF1 * calibr) {
 
-  double histMin[npeak] = {203e3, 247e3, 100e3, 78e3},
-         histMax[npeak] = {247.3e3, 290e3, 160e3, 130e3},
-         peakMin[npeak] = {222e3, 250e3, 124e3, 103e3},
-         peakMax[npeak] = {242e3, 270e3, 146e3, 122e3},
-         initBkg[npeak][3] = {{40, -.2, 1e-5}, {10., -1e-5, 0.},
-                              {10, .03, 1.e-7}, {100, .03, 1.e-7}},
-         initPeak[npeak][3] = {{.2e3, 49e3, 1.1e3}, {.2e3, 56e3, 1.1e3},
-                               {1e3, 28.5e3, 1e3}, {.4e3, 54e3, .8e3}};
+  double histMin[npeak] = {180e3, 263.5e3, 100e3, 230e3},
+         histMax[npeak] = {260e3, 302e3, 160e3, 300e3},
+         peakMin[npeak] = {232e3, 263e3, 124e3, 254e3},
+         peakMax[npeak] = {260e3, 290e3, 146e3, 282e3},
+         initBkg[npeak][3] = {{80, -2, 0}, {-4.7e-1, 6e-5, 0.},
+                              {4.1e2, -4.8e-3, 1.4e-8}, {2.3e1, 1.7e-3, 1.4e-8}},
+         initPeak[npeak][3] = {{.16e3, 247e3, 5e3}, {.14e3, 277e3, 5e3},
+                               {1e3, 135e3, 1e3}, {.4e3, 268e3, .8e3}};
 
 
   TFitResultPtr results[npeak];
