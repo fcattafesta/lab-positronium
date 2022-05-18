@@ -4,7 +4,7 @@ Bool_t reject0 = kTRUE;
 
 void NaSpectrum(int pol=1) {
 
-  std::string treepath = "data/1205/coinc_1.root",
+  std::string treepath = "data/PMT1/1205/coinc_1.root",
               figpath = Form("figures/time/1205_coinc1_pol%dfix.pdf", pol),
               treename = "tree;2",
               branchname = "EnergyTrap",
@@ -22,15 +22,23 @@ void NaSpectrum(int pol=1) {
   double corr = -0.95;
 
 
+  if (pol==1) {
+    a = slope;
+    da = d_slope;
+    b = cte;
+    db = d_cte;
+  }
+
+
   int nbins = 200;
 
   auto f_bkg = [=](double *x, double *p) {
       if (reject0 && x[0]>=peakMin && x[0]<=peakMax) {
       TF1::RejectPoint();
       return 0.;
-    }
-    return p[0] + p[1] * x[0] + p[2] * x[0] * x[0];
-  };
+      }
+      return p[0] + p[1] * x[0] + p[2] * x[0] * x[0];
+    };
 
   auto f_tot = [&](double *x, double *p) {
        return signal(x, p) + f_bkg(x, &p[3]);
@@ -40,47 +48,21 @@ void NaSpectrum(int pol=1) {
   TF1 *bkg = new TF1("bkg", f_bkg, LowLim, UpLim, 3);
   bkg->SetParameters(.3e3, -0.03, .003);
 
-  if (pol==1) {
 
-    auto h = CalSpectrum_linear(treepath, treename, branchname, nbins, LowLim, UpLim, cte, slope);
+  auto h = CalSpectrum(treepath, treename, branchname, pol, nbins, LowLim, UpLim, a, b);
 
-    h->Fit(bkg, "SRLNQI");
-    reject0 = kFALSE;
+  h->Fit(bkg, "SRLNQI");
+  reject0 = kFALSE;
 
-    TF1 *fitFunc = new TF1("fitFunc", f_tot, LowLim, UpLim, 6);
-    fitFunc->SetParameters(1.2e3, .511e3, .02e3,
+  TF1 *fitFunc = new TF1("fitFunc", f_tot, LowLim, UpLim, 6);
+  fitFunc->SetParameters(1.2e3, .511e3, .02e3,
                            bkg->GetParameter(0), bkg->GetParameter(1), bkg->GetParameter(2));
 
-    auto results = h->Fit(fitFunc, "SRLNI");
+  auto results = h->Fit(fitFunc, "SRLNI");
 
-    double Stat_error = CalibrationError(fitFunc->GetParameter(1), pol, slope, d_slope);
-    cout << "Stat. error on peak = " << Stat_error << endl;
+  double Stat_error = CalibrationError(fitFunc->GetParameter(1), pol, a, da, b, db, corr);
+  cout << "Stat. error on peak = " << Stat_error << endl;
 
-    DrawCalFits(h, figpath, elementname, fitFunc, nbins, LowLim, UpLim, results);
-
-  }
-
-
-  if (pol==2) {
-
-    auto h = CalSpectrum_quadratic(treepath, treename, branchname, nbins, LowLim, UpLim, a, b);
-
-    h->Fit(bkg, "SRLNQI");
-    reject0 = kFALSE;
-
-    TF1 *fitFunc = new TF1("fitFunc", f_tot, LowLim, UpLim, 6);
-    fitFunc->SetParameters(1.2e3, .511e3, .02e3,
-                           bkg->GetParameter(0), bkg->GetParameter(1), bkg->GetParameter(2));
-
-    auto results = h->Fit(fitFunc, "SRLNI");
-
-    double Stat_error = CalibrationError(fitFunc->GetParameter(1), pol, a, da, b, db, corr);
-    cout << "Stat. error on peak = " << Stat_error << endl;
-
-    DrawCalFits(h, figpath, elementname, fitFunc, nbins, LowLim, UpLim, results);
-
-  }
-
-
+  DrawCalFits(h, figpath, elementname, fitFunc, nbins, LowLim, UpLim, results);
 
 }
