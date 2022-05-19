@@ -16,8 +16,8 @@ void Triple(int pol=1) {
 
   int nbins = 20;
 
-  double EnergyLow = 340.67 - 200,
-         EnergyUp = 340.67 + 200;
+  double EnergyLow = 340.67 - 140,
+         EnergyUp = 340.67 + 140;
 
   double a1 = 42.3, a2 = 206.7, a3 = 86.9 ,
          da1 = 0.2, da2 = 2.5, da3 = 1.2;

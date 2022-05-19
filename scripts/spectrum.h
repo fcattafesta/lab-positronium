@@ -99,7 +99,6 @@ TH1D * CalSpectrum_sum(std::string treepath1, std::string treepath2,
       data1 = (Energy1 - b1) / a1;
       data2 = (Energy2 - b2) / a2;
       data3 = (Energy3 - b3) / a3;
-      cout << i << endl;
       if ((Cut(data1, EnergyUp, EnergyLow) == 1) &&
           (Cut(data2, EnergyUp, EnergyLow) == 1) &&
           (Cut(data3, EnergyUp, EnergyLow) == 1) &&
