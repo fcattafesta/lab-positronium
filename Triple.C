@@ -14,11 +14,14 @@ void Triple(int pol=1) {
   double LowLim = -0e3, UpLim = 2e3;
   double peakMin = 0.48e3, peakMax = 0.6e3;
 
+  int nbins = 20;
+
+  double EnergyLow = 340.67 - 200,
+         EnergyUp = 340.67 + 200;
+
   double a1 = 42.3, a2 = 206.7, a3 = 86.9 ,
          da1 = 0.2, da2 = 2.5, da3 = 1.2;
   double b = 0, db = 0;
-
-  int nbins = 27;
 
   auto f_bkg = [=](double *x, double *p) {
       if (reject0 && x[0]>=peakMin && x[0]<=peakMax) {
@@ -38,7 +41,7 @@ void Triple(int pol=1) {
 
 
   auto h = CalSpectrum_sum(treepath1, treepath2, treepath3, pol, nbins,
-                           LowLim, UpLim, a1, b, a2, b, a3, b);
+                           LowLim, UpLim, EnergyLow, EnergyUp, a1, b, a2, b, a3, b);
 
   h->Fit(bkg, "SRLNQI");
   reject0 = kFALSE;
