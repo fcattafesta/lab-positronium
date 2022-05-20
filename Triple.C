@@ -4,20 +4,20 @@ Bool_t reject0 = kTRUE;
 
 void Triple(int pol=1) {
 
-  std::string treepath1 = "data/1805/triple_1.root",
-              treepath2 = "data/1805/triple_2.root",
-              treepath3 = "data/1805/triple_3.root",
-              figpath = Form("figures/triple/1805_triple_pol%dfix.pdf", pol),
+  std::string treepath1 = "data/1705/triple_1.root",
+              treepath2 = "data/1705/triple_2.root",
+              treepath3 = "data/1705/triple_3.root",
+              figpath = Form("figures/triple/1705_triple_pol%dfix_no_cut.pdf", pol),
               elementname = "{}^{22}Na";
 
 
-  double LowLim = -0e3, UpLim = 2e3;
+  double LowLim = 0e3, UpLim = 2e3;
   double peakMin = 0.48e3, peakMax = 0.6e3;
 
-  int nbins = 20;
+  int nbins = 50;
 
-  double EnergyLow = 340.67 - 140,
-         EnergyUp = 340.67 + 140;
+  double EnergyLow = 2 * 511 * (1 - 0.02) ,
+         EnergyUp = 2 * 511 * (1 + 0.02);
 
   double a1 = 42.3, a2 = 206.7, a3 = 86.9 ,
          da1 = 0.2, da2 = 2.5, da3 = 1.2;
@@ -40,7 +40,7 @@ void Triple(int pol=1) {
   bkg->SetParameters(.3e3, -0.03, .003);
 
 
-  auto h = CalSpectrum_sum(treepath1, treepath2, treepath3, pol, nbins,
+  auto h = CalSpectrum_sum_var(treepath1, treepath2, treepath3, pol, nbins,
                            LowLim, UpLim, EnergyLow, EnergyUp, a1, b, a2, b, a3, b);
 
   h->Fit(bkg, "SRLNQI");
