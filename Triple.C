@@ -4,9 +4,9 @@ Bool_t reject0 = kTRUE;
 
 void Triple(int pol=1) {
 
-  std::string treepath1 = "data/1705/triple_1.root",
-              treepath2 = "data/1705/triple_2.root",
-              treepath3 = "data/1705/triple_3.root",
+  std::string treepath1 = "data/2405/triple_1.root",
+              treepath2 = "data/2405/triple_2.root",
+              treepath3 = "data/2405/triple_3.root",
               figpath = Form("figures/triple/1705_triple_pol%dfix_no_cut.pdf", pol),
               elementname = "{}^{22}Na";
 
@@ -16,8 +16,8 @@ void Triple(int pol=1) {
 
   int nbins = 50;
 
-  double EnergyLow = 2 * 511 * (1 - 0.02) ,
-         EnergyUp = 2 * 511 * (1 + 0.02);
+  double EnergyLow = 0,
+         EnergyUp = 2e3;
 
   double a1 = 42.3, a2 = 206.7, a3 = 86.9 ,
          da1 = 0.2, da2 = 2.5, da3 = 1.2;

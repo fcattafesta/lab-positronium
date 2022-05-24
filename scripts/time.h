@@ -3,7 +3,7 @@ int RECORD_LENGTH = 1030;
 void Time(std::string treepath) {
 
   auto f = new TFile(treepath.c_str(), "UPDATE");
-  auto t = f->Get<TTree>("tree;1");
+  auto t = f->Get<TTree>("tree;2");
 
   int nentries = t->GetEntries();
   int v[RECORD_LENGTH];
@@ -49,19 +49,17 @@ void Time(std::string treepath) {
     if (time_1 != time_2) {
       m = (thr_2 - thr_1) / (time_2 - time_1);
       q = thr_1 - m * time_1;
-      Time = (baseline - q) / m;
+      Time = ((baseline - q) / m) * 4;
       counter_neq = counter_neq + 1;
     }
     else {
-      Time = time_1;
+      Time = time_1 * 4;
       counter_eq = counter_eq + 1;
     }
 
-    //bTime->Fill();
+    bTime->Fill();
   }
 
-  cout << (counter_neq - counter_eq) / (counter_neq + counter_eq) << endl;
-
-  //t->Write();
+  t->Write();
   f->Close();
 }
