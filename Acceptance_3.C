@@ -2,11 +2,21 @@
 
 void Acceptance_3() {
 
-  int count=0, n_ev = 1e9;
+  int count=0, n_ev = 1e8;
 
   double M = 1022;
 
   TRandom3 genx, geny, gen;
+
+
+  double x_1 = -25.5, y_1 = -14.9,
+         //x_1 = -30.0, y_1 = -17.5,
+         x_2 = -x_1, y_2 = y_1, x_3 = 0, y_3 = 16.7;
+
+  double r = 2.5, th_1 = TMath::Pi()/3;
+
+  double dx = r*TMath::Cos(th_1), dy = r*TMath::Sin(th_1);
+
 
 
   for (int i=0; i<n_ev; i++) {
@@ -66,17 +76,17 @@ void Acceptance_3() {
   double theta2 = gen.Uniform(-TMath::Pi(), TMath::Pi());
   double theta3 = TMath::ACos(M - 1 - Energy1*(1+TMath::Cos(theta1)) - Energy2*(1+TMath::Cos(theta2)));
 
-  double ang1_min = -TMath::Pi() - TMath::ASin( (-23.7 - x0)/TMath::Sqrt( pow(-17.1 - y0, 2) + pow(-23.7 - x0, 2) ) );
+  double ang1_min = -TMath::Pi() - TMath::ASin( (x_1 + dx - x0)/TMath::Sqrt( pow(y_1 - dy - y0, 2) + pow(x_1 + dx - x0, 2) ) );
 
-  double ang1_max =  -TMath::Pi() - TMath::ASin( (-26.8 - x0)/TMath::Sqrt( pow(-12.7 - y0, 2) + pow(-26.8 - x0, 2) ) );
+  double ang1_max = -TMath::Pi() - TMath::ASin( (x_1 - dx - x0)/TMath::Sqrt( pow(y_1 + dy - y0, 2) + pow(x_1 - dx - x0, 2) ) );
 
-  double ang2_min = TMath::Pi() - TMath::ASin( (+26.8 - x0)/TMath::Sqrt( pow(-12.7 - y0, 2) + pow(+26.8 - x0, 2) ) );
+  double ang2_min = TMath::Pi() - TMath::ASin( (x_2 + dx - x0)/TMath::Sqrt( pow(y_2 + dy - y0, 2) + pow(x_2 + dx - x0, 2) ) );
 
-  double ang2_max = TMath::Pi() - TMath::ASin( (+23.7 - x0)/TMath::Sqrt( pow(-17.1 - y0, 2) + pow(+23.7 - x0, 2) ) );
+  double ang2_max = TMath::Pi() - TMath::ASin( (x_2 - dx - x0)/TMath::Sqrt( pow(y_2 - dy - y0, 2) + pow(x_2 - dx - x0, 2) ) );
 
-  double ang3_min = TMath::ASin( (-2.5 - x0)/TMath::Sqrt( pow(16.7 - y0, 2) + pow(-2.5 - x0, 2) ) );
+  double ang3_min = TMath::ASin( (x_3 - r - x0)/TMath::Sqrt( pow(y_3 - y0, 2) + pow(x_3 - r - x0, 2) ) );
 
-  double ang3_max = TMath::ASin( (+2.5 - x0)/TMath::Sqrt( pow(16.7 - y0, 2) + pow(+2.5 - x0, 2) ) );
+  double ang3_max = TMath::ASin( (x_3 + r - x0)/TMath::Sqrt( pow(y_3 - y0, 2) + pow(x_3 + r - x0, 2) ) );
 
 
   if (
