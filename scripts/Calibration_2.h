@@ -17,12 +17,12 @@ TFitResultPtr Calibration_2(std::string treepath[npeak], std::string figpath[npe
 */
 
 
-  double histMin[npeak] = {122e3, 230e3},
-  histMax[npeak] = {170e3, 300e3},
-  peakMin[npeak] = {134e3, 254e3},
-  peakMax[npeak] = {154e3, 282e3},
+  double histMin[npeak] = {122e3, 270e3},
+  histMax[npeak] = {170e3, 330e3},
+  peakMin[npeak] = {134e3, 285e3},
+  peakMax[npeak] = {154e3, 308e3},
   initBkg[npeak][3] = {{4.1e2, -4.8e-3, 1.4e-8}, {2.3e1, 1.7e-3, 1.4e-8}},
-  initPeak[npeak][3] = {{.1e3, 140e3, 1e3}, {.4e3, 268e3, .8e3}};
+  initPeak[npeak][3] = {{.1e3, 140e3, 1e3}, {.4e3, 298e3, .8e3}};
   int nbins = 50;
 
   TFitResultPtr results[npeak];
