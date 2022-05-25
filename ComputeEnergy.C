@@ -3,12 +3,13 @@
 void ComputeEnergy() {
 
   std::string treepaths[6] = {
-                                "data/calibration_1/2405/137Cs.root",
-                                "data/calibration_1/2405/22Na.root",
-                                "data/calibration_2/2405/137Cs.root",
-                                "data/calibration_2/2405/22Na.root",
-                                "data/calibration_3/2405/137Cs.root",
-                                "data/calibration_3/2405/22Na.root"};
+    "data/calibration_2/2505/60Co.root",
+    "data/calibration_2/2505/137Cs.root",
+    "data/calibration_2/2505/22Na.root",
+    "data/calibration_3/2505/60Co.root",
+    "data/calibration_3/2505/137Cs.root",
+    "data/calibration_3/2505/22Na.root"
+                              };
 /*
   std::string coinctree[2] = {"data/1005/coinc_1.root",
                               "data/1005/coinc_2.root"};
@@ -19,7 +20,7 @@ void ComputeEnergy() {
                               "data/2405/triple_3.root"};
 */
 
-  for (auto i=4; i<6; i++) {
+  for (auto i=3; i<6; i++) {
     cout << treepaths[i] << endl;
     //EnergyIntegral(treepaths[i], low, up);
     //cout << "Intergal finished" << endl;
