@@ -1,12 +1,12 @@
 
 void Time() {
-  std::string treepath[3] = {"data/2405/triple_1.root",
-                             "data/2405/triple_2.root",
-                             "data/2405/triple_3.root"};
+  std::string treepath[3] = {"data/1705/triple_1.root",
+                             "data/1705/triple_2.root",
+                             "data/1705/triple_3.root"};
 
   double time_1, time_2, time_3;
   int nbins = 50;
-  double inf = -1000, sup = 1000;
+  double inf = -100, sup = 100;
 
   auto f1 = new TFile(treepath[0].c_str(), "READ");
   auto t1 = f1->Get<TTree>("tree;3");

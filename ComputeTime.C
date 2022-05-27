@@ -2,9 +2,9 @@
 
 void ComputeTime() {
 
-  std::string treepath[3] = {"data/2405/triple_1.root",
-                             "data/2405/triple_2.root",
-                             "data/2405/triple_3.root"};
+  std::string treepath[3] = {"data/2605/Gel/Gel_1.root",
+                             "data/2605/Gel/Gel_2.root",
+                             "data/2605/Gel/Gel_3.root"};
 
   double time_1, time_2;
   int nbins = 50;

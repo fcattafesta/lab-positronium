@@ -6,15 +6,20 @@ int Cut(double data, double inf, double sup) {
 
 void TripleCut() {
 
-  std::string treepath[3] = {"data/2405/triple_1.root",
+  std::string treepath[6] = {"data/2405/triple_1.root",
                              "data/2405/triple_2.root",
-                             "data/2405/triple_3.root"};
+                             "data/2405/triple_3.root",
+                             "data/1705/triple_1.root",
+                             "data/1705/triple_2.root",
+                             "data/1705/triple_3.root"};
 
-  double a1 = 40, a2 = 223.38, a3 = 88.85 ,
+  double a1 = 40, a2 = 223.38, a3 = 88.85 , a4 = 42.3, a5 = 206.75, a6 = 86.92,
          da1 = 0.2, da2 = 8.62, da3 = 3.56;
-  double b1 = 0, b2 = 0, b3 = 0;
+  double b1 = 40, b2 = 223, b3 = 89;
 
-  double data1, data2, data3, Energy1, Energy2, Energy3, time_1, time_2, time_3;
+  double data1, data2, data3, data4, data5, data6,
+         Energy1, Energy2, Energy3, Energy4, Energy5, Energy6,
+         time_1, time_2, time_3, time_4, time_5, time_6;
 
   int nbins = 50;
   double inf = 0, sup = 2e3;
@@ -38,6 +43,21 @@ void TripleCut() {
   t3->SetBranchAddress("Time", &time_3);
   t3->SetBranchAddress("EnergyTrap", &Energy3);
 
+  auto f4 = new TFile(treepath[3].c_str(), "READ");
+  auto t4 = f4->Get<TTree>("tree;3");
+  t4->SetBranchAddress("Time", &time_4);
+  t4->SetBranchAddress("EnergyTrap", &Energy4);
+
+  auto f5 = new TFile(treepath[4].c_str(), "READ");
+  auto t5 = f5->Get<TTree>("tree;3");
+  t5->SetBranchAddress("Time", &time_5);
+  t5->SetBranchAddress("EnergyTrap", &Energy5);
+
+  auto f6 = new TFile(treepath[5].c_str(), "READ");
+  auto t6 = f6->Get<TTree>("tree;3");
+  t6->SetBranchAddress("Time", &time_6);
+  t6->SetBranchAddress("EnergyTrap", &Energy6);
+
 
   int nentries = t1->GetEntries();
 
@@ -60,12 +80,53 @@ void TripleCut() {
 
     for (int i=0; i<nentries; i++) {
       t1->GetEntry(i); t2->GetEntry(i); t3->GetEntry(i);
-      data1 = (Energy1 - b1) / a1;
-      data2 = (Energy2 - b2) / a2;
-      data3 = (Energy3 - b3) / a3;
+      data1 = Energy1 / a1;
+      data2 = Energy2 / a2;
+      data3 = Energy3 / a3;
       auto time_21 = time_2 - time_1;
       auto time_31 = time_3 - time_1;
       auto time_32 = time_3 - time_2;
+
+      if (Cut(time_21, -30, 20) == 1 && Cut(time_31, -40, 20) == 1 &&
+          Cut(time_32, -20, 25) == 1) {
+
+            if (Cut(data1, inf, sup) == 1) h_1->Fill(data1);
+
+            if (Cut(data2, inf, sup) == 1) h_2->Fill(data2);
+
+            if (Cut(data3, inf, sup) == 1) h_3->Fill(data3);
+
+            if (Cut(data1, EnergyLow, EnergyUp) == 1 &&
+                Cut(data2, EnergyLow, EnergyUp) == 1 &&
+                Cut(data3, EnergyLow, EnergyUp) == 1)
+                h->Fill(data1 + data2 + data3);
+      }
+      if (Cut(time_21, -30, 20) == -1 && Cut(time_31, -40, 20) == -1 &&
+          Cut(time_32, -20, 25) == -1) {
+
+            if (Cut(data1, inf, sup) == 1) h_t1->Fill(data1);
+
+            if (Cut(data2, inf, sup) == 1) h_t2->Fill(data2);
+
+            if (Cut(data3, inf, sup) == 1 ) h_t3->Fill(data3);
+
+            if (Cut(data1, EnergyLow, EnergyUp) == 1 &&
+                Cut(data2, EnergyLow, EnergyUp) == 1 &&
+                Cut(data3, EnergyLow, EnergyUp) == 1)
+                h_t->Fill(data1 + data2 + data3);
+      }
+    }
+
+    nentries = t4->GetEntries();
+
+    for (int i=0; i<nentries; i++) {
+      t4->GetEntry(i); t5->GetEntry(i); t6->GetEntry(i);
+      data1 = Energy4 / a4;
+      data2 = Energy5 / a5;
+      data3 = Energy6 / a6;
+      auto time_21 = time_5 - time_4;
+      auto time_31 = time_6 - time_4;
+      auto time_32 = time_6 - time_5;
 
       if (Cut(time_21, -30, 20) == 1 && Cut(time_31, -40, 20) == 1 &&
           Cut(time_32, -20, 25) == 1) {
