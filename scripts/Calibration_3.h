@@ -5,13 +5,25 @@ const int npeak = 2;
 TFitResultPtr Calibration_3(std::string treepath[npeak], std::string figpath[npeak],
                           std::string elementname[npeak], std::string figregrpath,
                           TF1 * calibr) {
+/*
+  double histMin[npeak] = {70e3, 103.5e3, 45e3, 95e3},
+         histMax[npeak] = {103.5e3, 122e3, 85e3, 130e3},
+         peakMin[npeak] = {89e3, 103.5e3, 54e3, 103e3},
+         peakMax[npeak] = {103.5e3, 112e3, 64e3, 119e3},
+         initBkg[npeak][3] = {{4.1e2, -4.8e-3, 1.4e-8}, {2.3e1, 1.7e-3, 1.4e-8},
+                              {4.1e2, -4.8e-3, 1.4e-8}, {2.3e1, 1.7e-3, 1.4e-8}},
+         initPeak[npeak][3] = {{1e3, 97e3, 1e3}, {.9e3, 110e3, 3e3},
+                               {1e3, 58e3, 1e3}, {.9e3, 120e3, 3e3}};
+*/
 
-  double histMin[npeak] = { 45e3, 106e3},
-         histMax[npeak] = {85e3, 150e3},
-         peakMin[npeak] = {54e3, 117e3},
-         peakMax[npeak] = {64e3, 130e3},
-         initBkg[npeak][3] = {{4.1e2, -4.8e-3, 1.4e-8}, {2.3e1, 1.7e-3, 1.4e-8}},
-         initPeak[npeak][3] = {{1e3, 58e3, 1e3}, {.9e3, 120e3, 3e3}};
+double histMin[npeak] = {70e3, 45e3},
+       histMax[npeak] = {103.5e3, 85e3},
+       peakMin[npeak] = {89e3, 54e3},
+       peakMax[npeak] = {103.5e3, 64e3},
+       initBkg[npeak][3] = {{4.1e2, -4.8e-3, 1.4e-8}, {4.1e2, -4.8e-3, 1.4e-8}},
+       initPeak[npeak][3] = {{1e3, 97e3, 1e3}, {1e3, 58e3, 1e3}};
+
+    int nbins = 50;
 
 
   TFitResultPtr results[npeak];
@@ -19,9 +31,11 @@ TFitResultPtr Calibration_3(std::string treepath[npeak], std::string figpath[npe
   for (int i=0; i<npeak; i++) {
     results[i] = FitPeak(treepath[i], figpath[i], elementname[i], histMin[i], histMax[i],
                          peakMin[i], peakMax[i], initBkg[i], initPeak[i]);
+
   }
 
-  double ref[npeak] = {661.6, 1274.53},
+//double ref[npeak] = {1173.23, 1332.50, 661.6, 1274.53},
+  double ref[npeak] = {1173.23, 661.6},
          errRef[npeak] = {0, 0};
   double fitPeak[npeak], newErr[npeak], errPeak[npeak];
 
@@ -36,10 +50,13 @@ TFitResultPtr Calibration_3(std::string treepath[npeak], std::string figpath[npe
 
   auto chinorm = res1->Chi2() / res1->Ndf();
 
-  for (int i=0; i<npeak; i++) {
+  for (int i=0; i<2; i++) {
     newErr[i] = errPeak[i] * sqrt(chinorm);
     g->SetPointError(i, errRef[i], newErr[i]);
   }
+
+
+
 
   auto calFitRes = g->Fit(calibr, "SRN EX0");
 
