@@ -113,7 +113,7 @@ TLegend * DrawLegendFit(TCanvas *c, double x1, double y1, double x2, double y2,
   legend->SetFillStyle(0);
   legend->Draw();
 
-  auto fitLegend = new TPaveText(x1+0.25, y1, x2, y2);
+  auto fitLegend = new TPaveText(x1+0.2, y1, x2, y2);
   fitLegend->SetOption("NDC NB");
   fitLegend->SetFillStyle(0);
   fitLegend->SetBorderSize(0.);
@@ -130,10 +130,10 @@ TLegend * DrawLegendFit(TCanvas *c, double x1, double y1, double x2, double y2,
   auto sResolution = Form("Resolution: %.2f%%", (peak->GetParameter(2)/peak->GetParameter(1))*100);
   fitLegend->AddText(sEntries);
   fitLegend->AddText("Fit results:");
-  fitLegend->AddText(sFitEntries);
+  //fitLegend->AddText(sFitEntries);
   fitLegend->AddText(sMean);
   fitLegend->AddText(sSigma);
-  fitLegend->AddText(sProb);
+  //fitLegend->AddText(sProb);
   fitLegend->AddText(sResolution);
   fitLegend->Draw();
 
